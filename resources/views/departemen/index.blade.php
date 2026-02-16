@@ -50,6 +50,19 @@
                         </tr>
                     @endforelse
                 </tbody>
+                @if($departemens->count() > 0)
+                    <tfoot>
+                        <tr class="table-light fw-bold">
+                            <td colspan="3" class="text-end">Total Seluruh Karyawan:</td>
+                            <td>
+                                <span class="badge bg-success">
+                                    {{ $departemens->sum(fn($d) => $d->karyawans->count()) }}
+                                </span>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                @endif
             </table>
         </div>
     </div>
