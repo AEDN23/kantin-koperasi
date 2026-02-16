@@ -19,7 +19,7 @@ class TransaksiController extends Controller
             ->orderBy('karyawans.nama_karyawan')
             ->select('karyawans.*')
             ->get();
-        $barangs = Barang::where('stok', '>', 0)->get();
+        $barangs = Barang::orderBy('nama_barang')->get();
         return view('transaksi.create', compact('karyawans', 'barangs'));
     }
 

@@ -65,6 +65,14 @@
                         </tr>
                     @endforelse
                 </tbody>
+                @if($karyawan->transaksis->count() > 0)
+                    <tfoot>
+                        <tr class="table-warning fw-bold">
+                            <td colspan="2" class="text-end">Total Semua Transaksi:</td>
+                            <td>Rp {{ number_format($karyawan->transaksis->sum('total_belanja'), 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
+                @endif
             </table>
         </div>
     </div>

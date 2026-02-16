@@ -14,10 +14,6 @@
         <div class="card-body">
             <table class="table">
                 <tr>
-                    <th width="200">Kode Barang</th>
-                    <td><code>{{ $barang->kode_barang }}</code></td>
-                </tr>
-                <tr>
                     <th>Nama Barang</th>
                     <td>{{ $barang->nama_barang }}</td>
                 </tr>

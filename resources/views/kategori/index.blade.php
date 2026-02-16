@@ -12,7 +12,10 @@
 
     <div class="card">
         <div class="card-body">
-            <table class="table table-hover">
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari data...">
+            </div>
+            <table class="table table-hover searchable-table">
                 <thead class="table-dark">
                     <tr>
                         <th>No</th>

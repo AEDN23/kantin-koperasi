@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -24,7 +23,6 @@ return new class extends Migration
             $table->integer('jumlah');
             $table->integer('harga_satuan');
             $table->integer('total_harga');
-            $table->date('tanggal_beli');
             $table->timestamps();
         });
     }

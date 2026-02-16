@@ -10,9 +10,43 @@
         </a>
     </div>
 
+    {{-- Filter Tanggal --}}
+    <div class="card mb-3">
+        <div class="card-body">
+            <form action="{{ route('tambah-stok.index') }}" method="GET" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="dari" class="form-label">Dari Tanggal</label>
+                    <input type="date" class="form-control" id="dari" name="dari" value="{{ request('dari') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="sampai" class="form-label">Sampai Tanggal</label>
+                    <input type="date" class="form-control" id="sampai" name="sampai" value="{{ request('sampai') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="sort" class="form-label">Urutkan</label>
+                    <select class="form-select" id="sort" name="sort">
+                        <option value="desc" {{ request('sort', 'desc') == 'desc' ? 'selected' : '' }}>Terbaru</option>
+                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-filter"></i> Filter
+                    </button>
+                    <a href="{{ route('tambah-stok.index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-body">
-            <table class="table table-hover">
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari data...">
+            </div>
+            <table class="table table-hover searchable-table">
                 <thead class="table-dark">
                     <tr>
                         <th>No</th>

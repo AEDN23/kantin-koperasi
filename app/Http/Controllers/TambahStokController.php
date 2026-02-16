@@ -8,9 +8,23 @@ use Illuminate\Http\Request;
 
 class TambahStokController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tambahStoks = TambahStok::with('barang')->latest()->get();
+        $query = TambahStok::with('barang');
+
+        // Filter tanggal
+        if ($request->filled('dari')) {
+            $query->whereDate('tanggal', '>=', $request->dari);
+        }
+        if ($request->filled('sampai')) {
+            $query->whereDate('tanggal', '<=', $request->sampai);
+        }
+
+        // Sort
+        $sort = $request->get('sort', 'desc');
+        $query->orderBy('tanggal', $sort);
+
+        $tambahStoks = $query->get();
         return view('tambah-stok.index', compact('tambahStoks'));
     }
 

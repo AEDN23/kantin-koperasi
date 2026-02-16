@@ -12,11 +12,13 @@
 
     <div class="card">
         <div class="card-body">
-            <table class="table table-hover">
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari data...">
+            </div>
+            <table class="table table-hover searchable-table">
                 <thead class="table-dark">
                     <tr>
                         <th>No</th>
-                        <th>Kode</th>
                         <th>Nama Barang</th>
                         <th>Kategori</th>
                         <th>Harga Jual</th>
@@ -28,7 +30,6 @@
                     @forelse($barangs as $index => $barang)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td><code>{{ $barang->kode_barang }}</code></td>
                             <td>{{ $barang->nama_barang }}</td>
                             <td>{{ $barang->kategori->nama_kategori ?? '-' }}</td>
                             <td>Rp {{ number_format($barang->harga_jual, 0, ',', '.') }}</td>
@@ -51,7 +52,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted">Belum ada data barang</td>
+                            <td colspan="6" class="text-center text-muted">Belum ada data barang</td>
                         </tr>
                     @endforelse
                 </tbody>
