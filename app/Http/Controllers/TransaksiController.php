@@ -28,12 +28,81 @@ class TransaksiController extends Controller
         return redirect()->route('transaksi.index');
     }
 
-    public function riwayat()
+    public function riwayat(Request $request)
     {
-        $transaksis = Transaksi::with('karyawan', 'transaksiDetails.barang')
-            ->latest()
-            ->get();
+        $query = Transaksi::with('karyawan', 'transaksiDetails.barang');
+
+        // Filter tanggal
+        if ($request->filled('dari')) {
+            $query->whereDate('created_at', '>=', $request->dari);
+        }
+        if ($request->filled('sampai')) {
+            $query->whereDate('created_at', '<=', $request->sampai);
+        }
+
+        // Sort
+        $sort = $request->get('sort', 'desc');
+        $query->orderBy('created_at', $sort);
+
+        $transaksis = $query->get();
         return view('transaksi.riwayat', compact('transaksis'));
+    }
+
+    public function export(Request $request)
+    {
+        $query = Transaksi::with('karyawan', 'transaksiDetails.barang');
+
+        // Filter tanggal
+        if ($request->filled('dari')) {
+            $query->whereDate('created_at', '>=', $request->dari);
+        }
+        if ($request->filled('sampai')) {
+            $query->whereDate('created_at', '<=', $request->sampai);
+        }
+
+        // Sort
+        $sort = $request->get('sort', 'desc');
+        $query->orderBy('created_at', $sort);
+
+        $transaksis = $query->get();
+
+        $filename = "Riwayat_Transaksi_" . now()->format('Ymd_His') . ".csv";
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($transaksis) {
+            $file = fopen('php://output', 'w');
+
+            // Add UTF-8 BOM for Excel
+            fputs($file, $bom = chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header
+            fputcsv($file, ['No', 'Kode Transaksi', 'Karyawan', 'Jumlah Item', 'Total Belanja', 'Tanggal'], ';');
+
+            foreach ($transaksis as $index => $trx) {
+                fputcsv($file, [
+                    $index + 1,
+                    $trx->kode_transaksi,
+                    $trx->karyawan->nama_karyawan ?? '-',
+                    $trx->transaksiDetails->count() . ' item',
+                    $trx->total_belanja,
+                    $trx->created_at->format('d/m/Y H:i')
+                ], ';');
+            }
+
+            // Footer Total
+            fputcsv($file, ['', '', '', 'Total Semua:', $transaksis->sum('total_belanja'), ''], ';');
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function store(Request $request)

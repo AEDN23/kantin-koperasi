@@ -37,9 +37,22 @@ class KaryawanController extends Controller
             ->with('success', 'Karyawan berhasil ditambahkan!');
     }
 
-    public function show(Karyawan $karyawan)
+    public function show(Request $request, Karyawan $karyawan)
     {
-        $karyawan->load('departemen', 'transaksis');
+        $sort = $request->get('sort', 'desc');
+        $karyawan->load([
+            'departemen',
+            'transaksis' => function ($q) use ($request, $sort) {
+                if ($request->filled('dari')) {
+                    $q->whereDate('created_at', '>=', $request->dari);
+                }
+                if ($request->filled('sampai')) {
+                    $q->whereDate('created_at', '<=', $request->sampai);
+                }
+                $q->orderBy('created_at', $sort);
+            },
+            'transaksis.transaksiDetails.barang'
+        ]);
         return view('karyawan.show', compact('karyawan'));
     }
 
