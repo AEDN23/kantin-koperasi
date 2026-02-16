@@ -138,13 +138,13 @@
             var rows = [];
 
             // Header
-            rows.push(['Kode Transaksi', 'Tanggal', 'Barang', 'Total Belanja']);
+            rows.push(['Kode Transaksi', 'Tanggal', 'Barang', 'Quantity', 'Total Belanja']);
 
             // Data rows
             $('#tabelRiwayat tbody tr').each(function () {
                 var cols = [];
                 $(this).find('td').each(function (index) {
-                    if (index === 2) { // Column for Barang
+                    if (index === 2 || index === 3) { // Column for Barang or Quantity
                         var items = [];
                         $(this).find('li').each(function () {
                             items.push($(this).text().trim());
@@ -158,7 +158,7 @@
             });
 
             // Total row
-            rows.push(['', '', 'Total Semua Transaksi:', '{{ "Rp " . number_format($karyawan->transaksis->sum("total_belanja"), 0, ",", ".") }}']);
+            rows.push(['', '', '', 'Total Semua Transaksi:', '{{ "Rp " . number_format($karyawan->transaksis->sum("total_belanja"), 0, ",", ".") }}']);
 
             // Build CSV with BOM for Excel
             var csvContent = '\uFEFF';
