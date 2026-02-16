@@ -17,6 +17,6 @@ class Departemens extends Model
     // 1 departemen punya banyak karyawan
     public function karyawans(): HasMany
     {
-        return $this->hasMany(Karyawan::class);
+        return $this->hasMany(Karyawan::class, 'departemen_id');
     }
 }

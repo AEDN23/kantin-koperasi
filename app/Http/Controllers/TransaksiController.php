@@ -13,17 +13,27 @@ class TransaksiController extends Controller
 {
     public function index()
     {
-        $transaksis = Transaksi::with('karyawan', 'transaksiDetails.barang')
-            ->latest()
+        $karyawans = Karyawan::with('departemen')
+            ->join('departemens', 'karyawans.departemen_id', '=', 'departemens.id')
+            ->orderBy('departemens.nama_departemen')
+            ->orderBy('karyawans.nama_karyawan')
+            ->select('karyawans.*')
             ->get();
-        return view('transaksi.index', compact('transaksis'));
+        $barangs = Barang::where('stok', '>', 0)->get();
+        return view('transaksi.create', compact('karyawans', 'barangs'));
     }
 
     public function create()
     {
-        $karyawans = Karyawan::all();
-        $barangs = Barang::where('stok', '>', 0)->get();
-        return view('transaksi.create', compact('karyawans', 'barangs'));
+        return redirect()->route('transaksi.index');
+    }
+
+    public function riwayat()
+    {
+        $transaksis = Transaksi::with('karyawan', 'transaksiDetails.barang')
+            ->latest()
+            ->get();
+        return view('transaksi.riwayat', compact('transaksis'));
     }
 
     public function store(Request $request)
@@ -90,7 +100,7 @@ class TransaksiController extends Controller
             $transaksi->delete();
         });
 
-        return redirect()->route('transaksi.index')
+        return redirect()->route('transaksi.riwayat')
             ->with('success', 'Transaksi berhasil dihapus!');
     }
 }

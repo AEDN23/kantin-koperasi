@@ -19,13 +19,14 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Master Data (CRUD lengkap)
-Route::resource('departemen', DepartemenController::class);
+Route::resource('departemen', DepartemenController::class)->parameters(['departemen' => 'departemen']);
 Route::resource('karyawan', KaryawanController::class);
 Route::resource('kategori', KategoriController::class);
 Route::resource('barang', BarangController::class);
 Route::resource('tambah-stok', TambahStokController::class);
 
 // Transaksi
+Route::get('transaksi/riwayat', [TransaksiController::class, 'riwayat'])->name('transaksi.riwayat');
 Route::resource('transaksi', TransaksiController::class);
 
 // Laporan

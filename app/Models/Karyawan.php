@@ -22,7 +22,7 @@ class Karyawan extends Model
     // karyawan milik 1 departemen
     public function departemen(): BelongsTo
     {
-        return $this->belongsTo(Departemens::class);
+        return $this->belongsTo(Departemens::class, 'departemen_id');
     }
 
     // 1 karyawan punya banyak transaksi

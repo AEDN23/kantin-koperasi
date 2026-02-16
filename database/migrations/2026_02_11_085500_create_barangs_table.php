@@ -21,7 +21,7 @@ return new class extends Migration
             ->nullable()
             ->constrained('kategoris')
             ->onDelete('set null');
-            $table->string('deskripsi');
+            $table->string('deskripsi')->nullable();
             $table->timestamps();
         });
     }

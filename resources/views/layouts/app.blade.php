@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,36 +9,47 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+        rel="stylesheet">
+    @stack('styles')
     <style>
         .sidebar {
             min-height: 100vh;
             background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
         }
+
         .sidebar .nav-link {
-            color: rgba(255,255,255,.7);
+            color: rgba(255, 255, 255, .7);
             padding: 12px 20px;
             border-radius: 8px;
             margin: 2px 10px;
         }
+
         .sidebar .nav-link:hover,
         .sidebar .nav-link.active {
             color: #fff;
-            background: rgba(255,255,255,.15);
+            background: rgba(255, 255, 255, .15);
         }
+
         .sidebar .nav-link i {
             margin-right: 10px;
         }
+
         .main-content {
             background: #f4f6f9;
             min-height: 100vh;
         }
+
         .card {
             border: none;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
@@ -48,7 +60,8 @@
                 </div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                            href="{{ route('dashboard') }}">
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </a>
                     </li>
@@ -56,27 +69,32 @@
                         <small class="text-white-50 px-3">MASTER DATA</small>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('departemen.*') ? 'active' : '' }}" href="{{ route('departemen.index') }}">
+                        <a class="nav-link {{ request()->routeIs('departemen.*') ? 'active' : '' }}"
+                            href="{{ route('departemen.index') }}">
                             <i class="bi bi-building"></i> Departemen
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('karyawan.*') ? 'active' : '' }}" href="{{ route('karyawan.index') }}">
+                        <a class="nav-link {{ request()->routeIs('karyawan.*') ? 'active' : '' }}"
+                            href="{{ route('karyawan.index') }}">
                             <i class="bi bi-people"></i> Karyawan
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('kategori.*') ? 'active' : '' }}" href="{{ route('kategori.index') }}">
+                        <a class="nav-link {{ request()->routeIs('kategori.*') ? 'active' : '' }}"
+                            href="{{ route('kategori.index') }}">
                             <i class="bi bi-tags"></i> Kategori
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('barang.*') ? 'active' : '' }}" href="{{ route('barang.index') }}">
+                        <a class="nav-link {{ request()->routeIs('barang.*') ? 'active' : '' }}"
+                            href="{{ route('barang.index') }}">
                             <i class="bi bi-box"></i> Barang
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('tambah-stok.*') ? 'active' : '' }}" href="{{ route('tambah-stok.index') }}">
+                        <a class="nav-link {{ request()->routeIs('tambah-stok.*') ? 'active' : '' }}"
+                            href="{{ route('tambah-stok.index') }}">
                             <i class="bi bi-plus-circle"></i> Tambah Stok
                         </a>
                     </li>
@@ -84,15 +102,23 @@
                         <small class="text-white-50 px-3">TRANSAKSI</small>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('transaksi.*') ? 'active' : '' }}" href="{{ route('transaksi.index') }}">
-                            <i class="bi bi-cart"></i> Transaksi
+                        <a class="nav-link {{ request()->routeIs('transaksi.index') || request()->routeIs('transaksi.create') ? 'active' : '' }}"
+                            href="{{ route('transaksi.index') }}">
+                            <i class="bi bi-cart-plus"></i> Transaksi Baru
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('transaksi.riwayat') || request()->routeIs('transaksi.show') ? 'active' : '' }}"
+                            href="{{ route('transaksi.riwayat') }}">
+                            <i class="bi bi-clock-history"></i> Riwayat Transaksi
                         </a>
                     </li>
                     <li class="nav-item mt-3">
                         <small class="text-white-50 px-3">LAPORAN</small>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}" href="{{ route('laporan.index') }}">
+                        <a class="nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}"
+                            href="{{ route('laporan.index') }}">
                             <i class="bi bi-file-earmark-bar-graph"></i> Laporan
                         </a>
                     </li>
@@ -116,6 +142,10 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery & Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @stack('scripts')
 </body>
+
 </html>

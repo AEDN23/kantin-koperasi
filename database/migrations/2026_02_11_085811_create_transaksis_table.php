@@ -18,7 +18,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('karyawans')
                 ->onDelete('set null');
-            $table->string('keterangan');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

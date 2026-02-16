@@ -19,7 +19,7 @@ return new class extends Migration
                 ->onDelete('set null');
             $table->integer('jumlah');
             $table->date('tanggal');
-            $table->string('keterangan');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

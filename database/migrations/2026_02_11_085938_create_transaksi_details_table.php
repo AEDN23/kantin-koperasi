@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('jumlah');
             $table->integer('harga_satuan');
             $table->integer('total_harga');
+            $table->date('tanggal_beli');
             $table->timestamps();
         });
     }
