@@ -97,14 +97,14 @@
                             <td><a href="{{ route('transaksi.show', $transaksi) }}">{{ $transaksi->kode_transaksi }}</a></td>
                             <td>{{ $transaksi->created_at->format('d/m/Y H:i') }}</td>
                             <td>
-                                <ul class="mb-0 ps-3" style="list-style-type: '- ';">
+                                <ul class="mb-0 ps-3">
                                     @foreach($transaksi->transaksiDetails as $detail)
                                         <li>{{ $detail->barang->nama_barang ?? 'Barang Terhapus' }}</li>
                                     @endforeach
                                 </ul>
                             </td>
                             <td>
-                                <ul class=" mb-0 ps-3" style="list-style-type: '- ';">
+                                <ul class=" mb-0 ps-3">
                                     @foreach($transaksi->transaksiDetails as $detail)
                                         <li>{{ $detail->jumlah }}</li>
                                     @endforeach

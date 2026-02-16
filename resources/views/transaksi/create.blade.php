@@ -255,6 +255,14 @@
             $('.item-row').each(function () {
                 attachEventListeners($(this));
             });
+
+            // Handle form submission to prevent double input
+            $('#formTransaksi').on('submit', function() {
+                const btn = $(this).find('button[type="submit"]');
+                btn.prop('disabled', true);
+                btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...');
+                return true;
+            });
         });
     </script>
 @endpush
