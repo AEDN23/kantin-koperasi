@@ -2,10 +2,47 @@
 
 @section('title', 'Detail Transaksi')
 
+@push('styles')
+    <style>
+        @media print {
+
+            .sidebar,
+            .no-print,
+            .btn {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 0 !important;
+            }
+
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #eee !important;
+                margin-bottom: 1rem !important;
+            }
+
+            body {
+                background-color: white !important;
+            }
+
+            .container-fluid {
+                padding: 0 !important;
+            }
+
+            main {
+                padding: 0 !important;
+            }
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Detail Transaksi</h2>
-        <a href="{{ route('transaksi.index') }}" class="btn btn-secondary">
+        <h2 class="mb-0">Detail Transaksi</h2>
+        <a href="{{ route('transaksi.riwayat') }}" class="btn btn-secondary no-print">
             <i class="bi bi-arrow-left"></i> Kembali
         </a>
     </div>
@@ -33,7 +70,12 @@
         </div>
     </div>
 
-    <h4>Item Belanja</h4>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Item Belanja</h4>
+        <button onclick="window.print()" class="btn btn-sm btn-outline-primary no-print">
+            <i class="bi bi-printer"></i> Cetak Dokumen
+        </button>
+    </div>
     <div class="card">
         <div class="card-body">
             <table class="table table-hover">

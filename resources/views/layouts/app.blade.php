@@ -18,6 +18,7 @@
         .sidebar {
             min-height: 100vh;
             background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+            transition: all 0.3s ease;
         }
 
         .sidebar .nav-link {
@@ -25,6 +26,7 @@
             padding: 12px 20px;
             border-radius: 8px;
             margin: 2px 10px;
+            white-space: nowrap;
         }
 
         .sidebar .nav-link:hover,
@@ -40,12 +42,48 @@
         .main-content {
             background: #f4f6f9;
             min-height: 100vh;
+            transition: all 0.3s ease;
         }
 
         .card {
             border: none;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+        }
+
+        /* Sidebar Toggle Styles */
+        #toggleSidebar {
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        @media (min-width: 768px) {
+            body.sidebar-toggled .sidebar {
+                margin-left: -25%;
+                opacity: 0;
+                visibility: hidden;
+                position: absolute;
+            }
+
+            body.sidebar-toggled .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                flex: 0 0 100% !important;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .sidebar {
+                margin-left: -100%;
+                position: fixed;
+                width: 250px;
+                z-index: 1030;
+            }
+
+            body.sidebar-toggled .sidebar {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -127,6 +165,13 @@
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 main-content p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <button id="toggleSidebar" class="btn btn-light shadow-sm me-3 border">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h4 class="mb-0 fw-bold text-dark">@yield('title', 'Warung Koperasi')</h4>
+                </div>
+
                 <!-- Flash Message -->
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -148,6 +193,20 @@
     <script>
         // Global live search untuk tabel
         $(document).ready(function () {
+            // Sidebar Toggle Logic
+            if (localStorage.getItem('sidebar-state') === 'toggled') {
+                $('body').addClass('sidebar-toggled');
+            }
+
+            $('#toggleSidebar').on('click', function () {
+                $('body').toggleClass('sidebar-toggled');
+                if ($('body').hasClass('sidebar-toggled')) {
+                    localStorage.setItem('sidebar-state', 'toggled');
+                } else {
+                    localStorage.setItem('sidebar-state', 'normal');
+                }
+            });
+
             $('#searchInput').on('keyup', function () {
                 var value = $(this).val().toLowerCase();
                 $('.searchable-table tbody tr').filter(function () {

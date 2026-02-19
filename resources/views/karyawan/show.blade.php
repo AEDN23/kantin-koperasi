@@ -70,7 +70,7 @@
                         <i class="bi bi-x-circle"></i> Reset
                     </a>
                     @if($karyawan->transaksis->count() > 0)
-                        <button type="button" class="btn btn-success" onclick="exportExcel()">
+                        <button type="button" class="btn btn-success" onclick="Excel()">
                             <i class="bi bi-file-earmark-excel"></i> Export
                         </button>
                     @endif
@@ -88,6 +88,7 @@
                         <th>Tanggal</th>
                         <th>Barang</th>
                         <th>Quantity</th>
+                        <th>Harga Satuan</th>
                         <th>Total Belanja</th>
                     </tr>
                 </thead>
@@ -104,9 +105,16 @@
                                 </ul>
                             </td>
                             <td>
-                                <ul class=" mb-0 ps-3">
+                                <ul class="mb-0 ps-3">
                                     @foreach($transaksi->transaksiDetails as $detail)
                                         <li>{{ $detail->jumlah }}</li>
+                                    @endforeach
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="mb-0 ps-3">
+                                    @foreach($transaksi->transaksiDetails as $detail)
+                                        <li>Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }}</li>
                                     @endforeach
                                 </ul>
                             </td>
@@ -114,14 +122,14 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted">Belum ada transaksi</td>
+                            <td colspan="6" class="text-center text-muted">Belum ada transaksi</td>
                         </tr>
                     @endforelse
                 </tbody>
                 @if($karyawan->transaksis->count() > 0)
                     <tfoot>
                         <tr class="table-warning fw-bold">
-                            <td colspan="4" class="text-end">Total Semua Transaksi:</td>
+                            <td colspan="5" class="text-end">Total Semua Transaksi:</td>
                             <td>Rp {{ number_format($karyawan->transaksis->sum('total_belanja'), 0, ',', '.') }}</td>
                         </tr>
                     </tfoot>
@@ -133,23 +141,23 @@
 
 @push('scripts')
     <script>
-        function exportExcel() {
+        function Excel() {
             var nama = '{{ $karyawan->nama_karyawan }}';
             var rows = [];
 
             // Header
-            rows.push(['Kode Transaksi', 'Tanggal', 'Barang', 'Quantity', 'Total Belanja']);
+            rows.push(['Kode Transaksi', 'Tanggal', 'Barang', 'Quantity', 'Harga Satuan', 'Total Belanja']);
 
             // Data rows
             $('#tabelRiwayat tbody tr').each(function () {
                 var cols = [];
                 $(this).find('td').each(function (index) {
-                    if (index === 2 || index === 3) { // Column for Barang or Quantity
+                    if (index === 2 || index === 3 || index === 4) { // Column for Barang, Quantity, or Harga Satuan
                         var items = [];
                         $(this).find('li').each(function () {
                             items.push($(this).text().trim());
                         });
-                        cols.push(items.join(', '));
+                        cols.push(items.join('\n')); // Use newline for Alt+Enter effect in Excel
                     } else {
                         cols.push($(this).text().trim());
                     }
@@ -158,13 +166,18 @@
             });
 
             // Total row
-            rows.push(['', '', '', 'Total Semua Transaksi:', '{{ "Rp " . number_format($karyawan->transaksis->sum("total_belanja"), 0, ",", ".") }}']);
+            rows.push(['', '', '', '', 'Total Semua Transaksi:', '{{ "Rp " . number_format($karyawan->transaksis->sum("total_belanja"), 0, ",", ".") }}']);
 
-            // Build CSV with BOM for Excel
+            // Build CSV with BOM for Excel and proper quoting
             var csvContent = '\uFEFF';
-            csvContent += 'Riwayat Transaksi - ' + nama + '\n\n';
+            csvContent += '"Riwayat Transaksi - ' + nama.replace(/"/g, '""') + '"\n\n';
+            
             rows.forEach(function (row) {
-                csvContent += row.join(';') + '\n';
+                var processedRow = row.map(function(cell) {
+                    // Wrap in quotes and escape existing quotes for CSV multiline support
+                    return '"' + String(cell).replace(/"/g, '""') + '"';
+                });
+                csvContent += processedRow.join(';') + '\n';
             });
 
             // Download
