@@ -45,6 +45,7 @@ class TransaksiSeeder extends Seeder
                     'jumlah' => $jumlah,
                     'harga_satuan' => $barang->harga_jual,
                     'total_harga' => $jumlah * $barang->harga_jual,
+                    'metode_pembayaran' => fake()->randomElement(['tunai', 'piutang']),
                     'created_at' => $randomDate,
                     'updated_at' => $randomDate,
                 ]);

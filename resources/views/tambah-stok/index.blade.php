@@ -52,7 +52,9 @@
                         <th>No</th>
                         <th>Tanggal</th>
                         <th>Barang</th>
+                        <th>Harga Beli</th>
                         <th>Jumlah</th>
+                        <th>Total</th>
                         <th>Keterangan</th>
                         <th>Aksi</th>
                     </tr>
@@ -63,7 +65,9 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $stok->tanggal->format('d/m/Y') }}</td>
                             <td>{{ $stok->barang->nama_barang ?? '-' }}</td>
+                            <td>Rp {{ number_format($stok->harga_beli, 0, ',', '.') }}</td>
                             <td><span class="badge bg-success">+{{ $stok->jumlah }}</span></td>
+                            <td>Rp {{ number_format($stok->harga_beli * $stok->jumlah, 0, ',', '.') }}</td>
                             <td>{{ $stok->keterangan ?? '-' }}</td>
                             <td>
                                 <a href="{{ route('tambah-stok.edit', $stok) }}" class="btn btn-sm btn-warning">
@@ -79,7 +83,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Belum ada data stok masuk</td>
+                            <td colspan="8" class="text-center text-muted">Belum ada data stok masuk</td>
                         </tr>
                     @endforelse
                 </tbody>

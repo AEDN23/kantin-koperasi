@@ -12,6 +12,7 @@ class TambahStok extends Model
     protected $fillable = [
         'barang_id',
         'jumlah',
+        'harga_beli',
         'tanggal',
         'keterangan',
     ];

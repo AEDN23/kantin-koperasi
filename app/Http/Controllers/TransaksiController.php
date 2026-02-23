@@ -113,6 +113,7 @@ class TransaksiController extends Controller
             'items' => 'required|array|min:1',
             'items.*.barang_id' => 'required|exists:barangs,id',
             'items.*.jumlah' => 'required|integer|min:1',
+            'items.*.metode_pembayaran' => 'required|in:tunai,piutang',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -139,6 +140,7 @@ class TransaksiController extends Controller
                     'jumlah' => $item['jumlah'],
                     'harga_satuan' => $barang->harga_jual,
                     'total_harga' => $barang->harga_jual * $item['jumlah'],
+                    'metode_pembayaran' => $item['metode_pembayaran'],
                 ]);
 
                 // Kurangi stok

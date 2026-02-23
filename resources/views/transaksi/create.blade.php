@@ -46,7 +46,7 @@
 
                 <div id="items-container">
                     <div class="row mb-2 item-row align-items-center">
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <select class="form-select select2-barang barang-select" name="items[0][barang_id]" required>
                                 <option value="">-- Pilih Barang --</option>
                                 @foreach($barangs as $barang)
@@ -61,10 +61,16 @@
                             <input type="number" class="form-control jumlah-input" name="items[0][jumlah]"
                                 placeholder="Jumlah" min="1" required>
                         </div>
+                        <div class="col-md-2">
+                            <select class="form-select" name="items[0][metode_pembayaran]" required>
+                                <option value="piutang" selected>piutang</option>
+                                <option value="tunai">tunai</option>
+                            </select>
+                        </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control subtotal-display" readonly placeholder="Subtotal">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <button type="button" class="btn btn-danger btn-remove-item" disabled>
                                 <i class="bi bi-trash"></i>
                             </button>
@@ -170,7 +176,7 @@
             $('#btn-add-item').on('click', function () {
                 const newRow = $(`
                     <div class="row mb-2 item-row align-items-center">
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <select class="form-select select2-barang barang-select" name="items[${itemIndex}][barang_id]" required>
                                 ${barangOptionsHtml}
                             </select>
@@ -179,10 +185,16 @@
                             <input type="number" class="form-control jumlah-input" name="items[${itemIndex}][jumlah]"
                                 placeholder="Jumlah" min="1" required>
                         </div>
+                        <div class="col-md-2">
+                            <select class="form-select" name="items[${itemIndex}][metode_pembayaran]" required>
+                                <option value="piutang" selected>piutang</option>
+                                <option value="tunai">tunai</option>
+                            </select>
+                        </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control subtotal-display" readonly placeholder="Subtotal">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <button type="button" class="btn btn-danger btn-remove-item">
                                 <i class="bi bi-trash"></i>
                             </button>

@@ -85,6 +85,7 @@
                         <th>Nama Barang</th>
                         <th>Harga Satuan</th>
                         <th>Jumlah</th>
+                        <th>Metode</th>
                         <th>Total</th>
                     </tr>
                 </thead>
@@ -95,13 +96,20 @@
                             <td>{{ $detail->barang->nama_barang ?? '-' }}</td>
                             <td>Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }}</td>
                             <td>{{ $detail->jumlah }}</td>
+                            <td>
+                                @if($detail->metode_pembayaran == 'piutang')
+                                    <span class="badge bg-warning text-dark">Piutang</span>
+                                @else
+                                    <span class="badge bg-success">Tunai</span>
+                                @endif
+                            </td>
                             <td>Rp {{ number_format($detail->total_harga, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
                     <tr class="table-warning fw-bold">
-                        <td colspan="4" class="text-end">Total Belanja:</td>
+                        <td colspan="5" class="text-end">Total Belanja:</td>
                         <td>Rp {{ number_format($transaksi->total_belanja, 0, ',', '.') }}</td>
                     </tr>
                 </tfoot>

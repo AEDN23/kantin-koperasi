@@ -28,9 +28,23 @@
                     </select>
                 </div>
                 <div class="col-md-3">
+                    <label for="departemen_id" class="form-label">Departemen</label>
+                    <select class="form-select" id="departemen_id" name="departemen_id">
+                        <option value="">-- Semua Departemen --</option>
+                        @foreach($departemens as $dept)
+                            <option value="{{ $dept->id }}" {{ $departemen_id == $dept->id ? 'selected' : '' }}>
+                                {{ $dept->nama_departemen }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-filter"></i> Filter
                     </button>
+                    <a href="{{ route('laporan.index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise"></i> Reset
+                    </a>
                 </div>
             </form>
         </div>

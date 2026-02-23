@@ -30,7 +30,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
                         <label for="jumlah" class="form-label">Jumlah <span class="text-danger">*</span></label>
                         <input type="number" class="form-control @error('jumlah') is-invalid @enderror" id="jumlah"
                             name="jumlah" value="{{ old('jumlah') }}" min="1" required>
@@ -38,7 +38,16 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
+                        <label for="harga_beli" class="form-label">Harga Beli satuan <span
+                                class="text-danger">*</span></label>
+                        <input type="number" class="form-control @error('harga_beli') is-invalid @enderror" id="harga_beli"
+                            name="harga_beli" value="{{ old('harga_beli', 0) }}" min="0" required>
+                        @error('harga_beli')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-2 mb-3">
                         <label for="tanggal" class="form-label">Tanggal <span class="text-danger">*</span></label>
                         <input type="date" class="form-control @error('tanggal') is-invalid @enderror" id="tanggal"
                             name="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" required>

@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Warung Koperasi')</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
-        rel="stylesheet">
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/select2-bootstrap-5-theme.min.css') }}" rel="stylesheet">
     @stack('styles')
     <style>
         .sidebar {
@@ -54,7 +53,19 @@
         /* Sidebar Toggle Styles */
         #toggleSidebar {
             cursor: pointer;
-            z-index: 1001;
+            z-index: 1020;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1025;
+            backdrop-filter: blur(2px);
         }
 
         @media (min-width: 768px) {
@@ -75,14 +86,25 @@
 
         @media (max-width: 767.98px) {
             .sidebar {
-                margin-left: -100%;
+                margin-left: -280px;
                 position: fixed;
-                width: 250px;
-                z-index: 1030;
+                width: 280px;
+                z-index: 1040;
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
             }
 
             body.sidebar-toggled .sidebar {
                 margin-left: 0;
+            }
+
+            body.sidebar-toggled .sidebar-overlay {
+                display: block;
+            }
+
+            .main-content {
+                width: 100%;
+                flex: 0 0 100%;
+                max-width: 100%;
             }
         }
     </style>
@@ -93,8 +115,11 @@
         <div class="row">
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block sidebar p-0">
-                <div class="text-center py-4">
-                    <h5 class="text-white fw-bold">🏪 Warung Koperasi</h5>
+                <div class="d-flex justify-content-between align-items-center px-3 py-4">
+                    <h5 class="text-white fw-bold mb-0">🏪 Warung Koperasi</h5>
+                    <button class="btn btn-link text-white d-md-none p-0" id="closeSidebar">
+                        <i class="bi bi-x-lg fs-4"></i>
+                    </button>
                 </div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -185,11 +210,14 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery & Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay"></div>
+
+    <!-- Core Scripts -->
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('js/select2.min.js') }}"></script>
+
     <script>
         // Global live search untuk tabel
         $(document).ready(function () {
@@ -199,13 +227,21 @@
             }
 
             $('#toggleSidebar').on('click', function () {
+                toggleSidebar();
+            });
+
+            $('#closeSidebar, .sidebar-overlay').on('click', function () {
+                toggleSidebar();
+            });
+
+            function toggleSidebar() {
                 $('body').toggleClass('sidebar-toggled');
                 if ($('body').hasClass('sidebar-toggled')) {
                     localStorage.setItem('sidebar-state', 'toggled');
                 } else {
                     localStorage.setItem('sidebar-state', 'normal');
                 }
-            });
+            }
 
             $('#searchInput').on('keyup', function () {
                 var value = $(this).val().toLowerCase();
@@ -215,6 +251,12 @@
             });
         });
     </script>
+
+
+
+
+
+
     @stack('scripts')
 </body>
 

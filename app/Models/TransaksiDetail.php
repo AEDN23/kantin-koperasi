@@ -17,6 +17,7 @@ class TransaksiDetail extends Model
         'jumlah',
         'harga_satuan',
         'total_harga',
+        'metode_pembayaran',
     ];
 
     // detail milik 1 transaksi

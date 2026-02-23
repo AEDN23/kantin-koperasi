@@ -33,6 +33,9 @@
                             <td>{{ $departemen->deskripsi ?? '-' }}</td>
                             <td><span class="badge bg-primary">{{ $departemen->karyawans->count() }}</span></td>
                             <td>
+                                <a href="{{ route('departemen.show', $departemen) }}" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
                                 <a href="{{ route('departemen.edit', $departemen) }}" class="btn btn-sm btn-warning">
                                     <i class="bi bi-pencil"></i>
                                 </a>

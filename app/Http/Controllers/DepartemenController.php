@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Departemens;
+use App\Models\Transaksi;
 use Illuminate\Http\Request;
 
 class DepartemenController extends Controller
@@ -31,9 +32,22 @@ class DepartemenController extends Controller
             ->with('success', 'Departemen berhasil ditambahkan!');
     }
 
-    public function show(Departemens $departemen)
+    public function show(Request $request, Departemens $departemen)
     {
-        return view('departemen.show', compact('departemen'));
+        $query = Transaksi::whereIn('karyawan_id', $departemen->karyawans->pluck('id'))
+            ->with(['karyawan', 'transaksiDetails']);
+
+        // Filter tanggal
+        if ($request->filled('dari')) {
+            $query->whereDate('created_at', '>=', $request->dari);
+        }
+        if ($request->filled('sampai')) {
+            $query->whereDate('created_at', '<=', $request->sampai);
+        }
+
+        $transaksis = $query->latest()->get();
+
+        return view('departemen.show', compact('departemen', 'transaksis'));
     }
 
     public function edit(Departemens $departemen)

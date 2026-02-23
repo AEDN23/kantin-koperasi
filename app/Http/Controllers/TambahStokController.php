@@ -39,6 +39,7 @@ class TambahStokController extends Controller
         $request->validate([
             'barang_id' => 'required|exists:barangs,id',
             'jumlah' => 'required|integer|min:1',
+            'harga_beli' => 'required|integer|min:0',
             'tanggal' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
@@ -64,6 +65,7 @@ class TambahStokController extends Controller
         $request->validate([
             'barang_id' => 'required|exists:barangs,id',
             'jumlah' => 'required|integer|min:1',
+            'harga_beli' => 'required|integer|min:0',
             'tanggal' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,6 +17,7 @@ return new class extends Migration
                 ->constrained('barangs')
                 ->onDelete('set null');
             $table->integer('jumlah');
+            $table->integer('harga_beli')->default(0);
             $table->date('tanggal');
             $table->text('keterangan')->nullable();
             $table->timestamps();

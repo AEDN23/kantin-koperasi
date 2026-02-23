@@ -37,7 +37,7 @@
                     <a href="{{ route('transaksi.riwayat') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-x-circle"></i> Reset
                     </a>
- 
+
                 </div>
             </form>
         </div>
@@ -56,6 +56,7 @@
                         <th>Karyawan</th>
                         <th>Jumlah Item</th>
                         <th>Total Belanja</th>
+                        <th>Metode</th>
                         <th>Tanggal</th>
                         <th>Aksi</th>
                     </tr>
@@ -68,6 +69,15 @@
                             <td>{{ $transaksi->karyawan->nama_karyawan ?? '-' }}</td>
                             <td><span class="badge bg-info">{{ $transaksi->transaksiDetails->count() }} item</span></td>
                             <td>Rp {{ number_format($transaksi->total_belanja, 0, ',', '.') }}</td>
+                            <td>
+                                @if($transaksi->metode_pembayaran == 'Piutang')
+                                    <span class="badge bg-warning text-dark">Piutang</span>
+                                @elseif($transaksi->metode_pembayaran == 'Tunai')
+                                    <span class="badge bg-success">Tunai</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ $transaksi->metode_pembayaran }}</span>
+                                @endif
+                            </td>
                             <td>{{ $transaksi->created_at->format('d/m/Y H:i') }}</td>
                             <td>
                                 <a href="{{ route('transaksi.show', $transaksi) }}" class="btn btn-sm btn-info text-white">

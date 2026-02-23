@@ -35,4 +35,13 @@ class Transaksi extends Model
     {
         return $this->transaksiDetails->sum('total_harga');
     }
+
+    public function getMetodePembayaranAttribute(): string
+    {
+        $methods = $this->transaksiDetails->pluck('metode_pembayaran')->unique();
+        if ($methods->count() > 1) {
+            return 'Campuran';
+        }
+        return ucfirst($methods->first() ?? '-');
+    }
 }
