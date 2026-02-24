@@ -46,12 +46,12 @@ class DashboardController extends Controller
         $lowStockBarangs = Barang::whereRaw('stok <= stok_minimal')->get();
 
         // 1. Line Chart: Qty Barang Terjual Per Hari (1-31)
-        $chartLineSales = TransaksiDetail::selectRaw('DATE(transaksis.created_at) as date, SUM(transaksi_details.jumlah) as total_qty')
+        $chartLineSales = TransaksiDetail::selectRaw('CAST(transaksis.created_at AS DATE) as date, SUM(transaksi_details.jumlah) as total_qty')
             ->join('transaksis', 'transaksi_details.transaksi_id', '=', 'transaksis.id')
             ->whereMonth('transaksis.created_at', $selectedMonth)
             ->whereYear('transaksis.created_at', $selectedYear)
-            ->groupBy('date')
-            ->orderBy('date')
+            ->groupByRaw('CAST(transaksis.created_at AS DATE)')
+            ->orderByRaw('CAST(transaksis.created_at AS DATE)')
             ->get();
 
         // 2. Bar Chart 1: Top 10 Barang (Sering Dibeli - Berdasarkan Qty)
