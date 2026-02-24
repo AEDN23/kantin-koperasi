@@ -34,4 +34,10 @@ class Barang extends Model
     {
         return $this->hasMany(TransaksiDetail::class);
     }
+
+    // 1 barang bisa punya banyak riwayat pertambahan stok
+    public function tambahStoks(): HasMany
+    {
+        return $this->hasMany(TambahStok::class);
+    }
 }

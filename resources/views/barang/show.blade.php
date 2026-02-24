@@ -57,15 +57,105 @@
 
                     <div class="row g-3 mt-2">
                         <div class="col-sm-6">
-                            <div class="p-3 border rounded-4 bg-white shadow-sm h-100">
+                            <div class="p-3 border rounded-4 bg-white shadow-sm h-100 border-start border-4 border-dark">
                                 <label class="text-muted small fw-bold text-uppercase d-block mb-1">Harga Beli</label>
                                 <h4 class="fw-bold text-dark mb-0">Rp {{ number_format($barang->harga_beli, 0, ',', '.') }}</h4>
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <div class="p-3 border rounded-4 bg-white shadow-sm h-100">
+                            <div class="p-3 border rounded-4 bg-white shadow-sm h-100 border-start border-4 border-primary">
                                 <label class="text-muted small fw-bold text-uppercase d-block mb-1">Harga Jual</label>
                                 <h4 class="fw-bold text-primary mb-0">Rp {{ number_format($barang->harga_jual, 0, ',', '.') }}</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mt-3">
+                        <!-- Track Jual (Penjualan) -->
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light rounded-4 shadow-sm h-100">
+                                <div class="card-body p-4">
+                                    <h6 class="fw-bold text-danger mb-3">
+                                        <i class="bi bi-cart-dash me-1"></i> Track Jual (Penjualan)
+                                    </h6>
+                                    <div class="table-responsive" style="max-height: 300px;">
+                                        <table class="table table-sm table-borderless align-middle mb-0">
+                                            <thead>
+                                                <tr class="text-muted small text-uppercase">
+                                                    <th>Tanggal</th>
+                                                    <th class="text-center">Qty</th>
+                                                    <th class="text-end">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="small">
+                                                @forelse($salesHistory->take(10) as $detail)
+                                                    <tr class="border-bottom">
+                                                        <td class="py-2">
+                                                            <div class="fw-bold text-dark">
+                                                                {{ $detail->transaksi->created_at->format('d/m/Y') }}
+                                                            </div>
+                                                            <div class="text-muted" style="font-size: 0.75rem;">
+                                                                {{ $detail->transaksi->karyawan->nama ?? 'Umum' }}
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center py-2">{{ $detail->jumlah }}</td>
+                                                        <td class="text-end py-2 fw-bold text-danger">
+                                                            Rp {{ number_format($detail->total_harga, 0, ',', '.') }}
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="3" class="text-center py-4 text-muted">Belum ada penjualan</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track Beli (Stok Masuk) -->
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light rounded-4 shadow-sm h-100">
+                                <div class="card-body p-4">
+                                    <h6 class="fw-bold text-success mb-3">
+                                        <i class="bi bi-cart-plus me-1"></i> Track Beli (Stok Masuk)
+                                    </h6>
+                                    <div class="table-responsive" style="max-height: 300px;">
+                                        <table class="table table-sm table-borderless align-middle mb-0">
+                                            <thead>
+                                                <tr class="text-muted small text-uppercase">
+                                                    <th>Tanggal</th>
+                                                    <th class="text-center">Qty</th>
+                                                    <th class="text-end">Harga Beli</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="small">
+                                                @forelse($barang->tambahStoks->take(10) as $stok)
+                                                    <tr class="border-bottom">
+                                                        <td class="py-2">
+                                                            <div class="fw-bold text-dark">
+                                                                {{ $stok->tanggal->format('d/m/Y') }}
+                                                            </div>
+                                                            <div class="text-muted" style="font-size: 0.75rem;">
+                                                                {{ str($stok->keterangan)->limit(20) ?: 'Tambah Stok' }}
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center py-2">{{ $stok->jumlah }}</td>
+                                                        <td class="text-end py-2 fw-bold text-success">
+                                                            Rp {{ number_format($stok->harga_beli, 0, ',', '.') }}
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="3" class="text-center py-4 text-muted">Belum ada riwayat beli</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

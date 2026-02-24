@@ -76,8 +76,20 @@ class BarangController extends Controller
 
     public function show(Barang $barang)
     {
-        $barang->load('kategori');
-        return view('barang.show', compact('barang'));
+        $barang->load([
+            'kategori',
+            'transaksiDetails.transaksi',
+            'tambahStoks' => function ($query) {
+                $query->latest();
+            }
+        ]);
+
+        // Sort transaksiDetails manually by created_at since it's a nested relationship
+        $salesHistory = $barang->transaksiDetails->sortByDesc(function ($detail) {
+            return $detail->transaksi->created_at ?? $detail->created_at;
+        });
+
+        return view('barang.show', compact('barang', 'salesHistory'));
     }
 
     public function edit(Barang $barang)

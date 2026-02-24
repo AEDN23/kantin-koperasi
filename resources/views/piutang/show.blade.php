@@ -75,12 +75,36 @@
                             <div class="tab-pane fade show active" id="pills-unpaid" role="tabpanel">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="fw-bold mb-0">Daftar Transaksi Aktif</h5>
-                                    <form action="{{ route('piutang.show', $karyawan) }}" method="GET" class="d-flex align-items-center">
-                                        <label class="me-2 small text-muted text-nowrap">Urutkan:</label>
+                                    <form action="{{ route('piutang.show', $karyawan) }}" method="GET" class="d-flex align-items-center gap-2">
+                                        {{-- Filter Bulan --}}
+                                        <select name="month" class="form-select form-select-sm" onchange="this.form.submit()">
+                                            <option value="">Semua Bulan</option>
+                                            @for ($m = 1; $m <= 12; $m++)
+                                                <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
+                                                    {{ Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
+                                                </option>
+                                            @endfor
+                                        </select>
+
+                                        {{-- Filter Tahun --}}
+                                        <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+                                            <option value="">Semua Tahun</option>
+                                            @for ($y = date('Y'); $y >= 2024; $y--)
+                                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                                            @endfor
+                                        </select>
+
+                                        {{-- Sort --}}
                                         <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
                                             <option value="desc" {{ $sort == 'desc' ? 'selected' : '' }}>Terbaru</option>
                                             <option value="asc" {{ $sort == 'asc' ? 'selected' : '' }}>Terlama</option>
                                         </select>
+
+                                        @if($month || $year || $sort != 'desc')
+                                            <a href="{{ route('piutang.show', $karyawan) }}" class="btn btn-sm btn-outline-secondary" title="Reset Filter">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                            </a>
+                                        @endif
                                     </form>
                                 </div>
 

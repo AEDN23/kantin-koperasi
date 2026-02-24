@@ -17,8 +17,8 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="barang_id" class="form-label">Barang <span class="text-danger">*</span></label>
-                        <select class="form-select @error('barang_id') is-invalid @enderror" id="barang_id" name="barang_id"
-                            required>
+                        <select class="form-select select2 @error('barang_id') is-invalid @enderror" id="barang_id"
+                            name="barang_id" required>
                             <option value="">-- Pilih Barang --</option>
                             @foreach($barangs as $barang)
                                 <option value="{{ $barang->id }}" {{ old('barang_id') == $barang->id ? 'selected' : '' }}>
@@ -71,3 +71,16 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                theme: 'bootstrap-5',
+                placeholder: '-- Pilih Barang --',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+@endpush

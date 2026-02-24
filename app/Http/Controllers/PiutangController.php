@@ -35,28 +35,38 @@ class PiutangController extends Controller
     public function show(Request $request, Karyawan $karyawan)
     {
         $sort = $request->get('sort', 'desc');
+        $month = $request->get('month');
+        $year = $request->get('year');
 
-        // Piutang yang belum lunas
-        $piutangs = TransaksiDetail::with(['transaksi', 'barang'])
+        // Base query for unpaid
+        $unpaidQuery = TransaksiDetail::with(['transaksi', 'barang'])
             ->whereHas('transaksi', function ($q) use ($karyawan) {
                 $q->where('karyawan_id', $karyawan->id);
             })
-            ->where('status_pembayaran', 'belum_lunas')
-            ->orderBy('created_at', $sort)
-            ->get();
+            ->where('status_pembayaran', 'belum_lunas');
 
-        // Riwayat piutang yang sudah lunas
-        $piutangs_lunas = TransaksiDetail::with(['transaksi', 'barang'])
+        // Base query for paid
+        $paidQuery = TransaksiDetail::with(['transaksi', 'barang'])
             ->whereHas('transaksi', function ($q) use ($karyawan) {
                 $q->where('karyawan_id', $karyawan->id);
             })
             ->where('metode_pembayaran', 'piutang')
-            ->where('status_pembayaran', 'lunas')
-            ->orderBy('updated_at', 'desc')
-            ->limit(50) // Batasi history terakhir
-            ->get();
+            ->where('status_pembayaran', 'lunas');
 
-        return view('piutang.show', compact('karyawan', 'piutangs', 'piutangs_lunas', 'sort'));
+        // Apply filters if month/year are provided
+        if ($month) {
+            $unpaidQuery->whereMonth('created_at', $month);
+            $paidQuery->whereMonth('created_at', $month);
+        }
+        if ($year) {
+            $unpaidQuery->whereYear('created_at', $year);
+            $paidQuery->whereYear('created_at', $year);
+        }
+
+        $piutangs = $unpaidQuery->orderBy('created_at', $sort)->get();
+        $piutangs_lunas = $paidQuery->orderBy('updated_at', 'desc')->get();
+
+        return view('piutang.show', compact('karyawan', 'piutangs', 'piutangs_lunas', 'sort', 'month', 'year'));
     }
 
     public function bayar(Request $request, Karyawan $karyawan)
