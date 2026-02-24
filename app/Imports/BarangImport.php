@@ -32,7 +32,7 @@ class BarangImport implements ToModel, WithStartRow, WithCalculatedFormulas
         $stokMin = (int) ($row[4] ?? 5);
 
         // Jika sudah ada nama barang, SKIP (sesuai permintaan user)
-        $exists = Barang::where('nama_barang', 'ILIKE', $namaBarang)->exists();
+        $exists = Barang::where('nama_barang', 'LIKE', $namaBarang)->exists();
         if ($exists) {
             $this->duplicateCount++;
             return null;
