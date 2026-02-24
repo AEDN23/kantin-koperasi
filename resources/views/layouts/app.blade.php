@@ -219,6 +219,10 @@
     <!-- Sidebar Overlay for Mobile -->
     <div class="sidebar-overlay"></div>
 
+    <!-- SweetAlert2 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+    <script src="{{ asset('js/sweetalert2@11.js') }}"></script>
+
     <!-- Core Scripts -->
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
@@ -255,6 +259,22 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
                 });
             });
+
+            // SweetAlert for Import Results
+            @if(session('import_results'))
+                Swal.fire({
+                    title: 'Import Berhasil!',
+                    html: `
+                                            <div class="text-start">
+                                                <p class="mb-1 text-success">✅ Sukses: <strong>{{ session('import_results')['success'] }}</strong></p>
+                                                <p class="mb-0 text-danger">⚠️ Duplikasi (Skip): <strong>{{ session('import_results')['duplicate'] }}</strong></p>
+                                            </div>
+                                        `,
+                    icon: 'success',
+                    confirmButtonText: 'Oke',
+                    confirmButtonColor: '#198754'
+                });
+            @endif
         });
     </script>
 

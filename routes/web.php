@@ -23,6 +23,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::resource('departemen', DepartemenController::class)->parameters(['departemen' => 'departemen']);
 Route::resource('karyawan', KaryawanController::class);
 Route::resource('kategori', KategoriController::class);
+Route::get('barang/download-template', [BarangController::class, 'downloadTemplate'])->name('barang.download-template');
+Route::post('barang/import', [BarangController::class, 'import'])->name('barang.import');
 Route::resource('barang', BarangController::class);
 Route::resource('tambah-stok', TambahStokController::class);
 

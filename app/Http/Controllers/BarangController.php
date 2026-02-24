@@ -5,9 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use App\Exports\BarangTemplateExport;
+use App\Imports\BarangImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BarangController extends Controller
 {
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        $import = new BarangImport;
+        Excel::import($import, $request->file('file'));
+
+        return redirect()->back()->with('import_results', [
+            'success' => $import->successCount,
+            'duplicate' => $import->duplicateCount
+        ]);
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new BarangTemplateExport, 'template_import_barang.xlsx');
+    }
+
     public function index()
     {
         $barangs = Barang::with('kategori')->latest()->get();
@@ -32,7 +55,20 @@ class BarangController extends Controller
             'deskripsi' => 'nullable|string',
         ]);
 
-        Barang::create($request->all());
+        $data = $request->all();
+
+        // Generate Kode Barang Otomatis
+        $count = Barang::count() + 1;
+        $kodeBarang = 'BRG-' . str_pad($count, 3, '0', STR_PAD_LEFT);
+
+        while (Barang::where('kode_barang', $kodeBarang)->exists()) {
+            $count++;
+            $kodeBarang = 'BRG-' . str_pad($count, 3, '0', STR_PAD_LEFT);
+        }
+
+        $data['kode_barang'] = $kodeBarang;
+
+        Barang::create($data);
 
         return redirect()->route('barang.index')
             ->with('success', 'Barang berhasil ditambahkan!');
