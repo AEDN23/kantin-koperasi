@@ -15,41 +15,78 @@ class TransaksiSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buat 100 transaksi
-        Transaksi::factory()->count(100)->create()->each(function ($transaksi) {
-            // Set random date for transaction
-            $randomDate = fake()->dateTimeBetween('-1 year', 'now');
-            $transaksi->update([
-                'created_at' => $randomDate,
-                'updated_at' => $randomDate,
-            ]);
+        $karyawans = Karyawan::all();
+        $barangs = Barang::all();
 
-            // Untuk setiap transaksi, buat 1-5 detail transaksi
-            $barangIds = Barang::pluck('id')->toArray();
+        if ($karyawans->isEmpty() || $barangs->isEmpty()) {
+            return;
+        }
 
-            if (empty($barangIds)) {
-                Barang::factory()->count(10)->create();
-                $barangIds = Barang::pluck('id')->toArray();
+        $transactions = [
+            [
+                'kode_transaksi' => 'TRX-001',
+                'karyawan_id' => $karyawans->where('nip', '1001')->first()->id ?? $karyawans->random()->id,
+                'keterangan' => 'Pembelian rutin Bulanan',
+                'details' => [
+                    ['barang_nama' => 'Beras Pandan Wangi 5kg', 'jumlah' => 1, 'metode' => 'piutang'],
+                    ['barang_nama' => 'Minyak Goreng Bimoli 1L', 'jumlah' => 2, 'metode' => 'piutang'],
+                ],
+            ],
+            [
+                'kode_transaksi' => 'TRX-002',
+                'karyawan_id' => $karyawans->where('nip', '1003')->first()->id ?? $karyawans->random()->id,
+                'keterangan' => 'Cemilan kantor',
+                'details' => [
+                    ['barang_nama' => 'Indomie Goreng Spasial', 'jumlah' => 5, 'metode' => 'tunai'],
+                    ['barang_nama' => 'Aqua 600ml', 'jumlah' => 10, 'metode' => 'tunai'],
+                ],
+            ],
+            [
+                'kode_transaksi' => 'TRX-003',
+                'karyawan_id' => $karyawans->where('nip', '1004')->first()->id ?? $karyawans->random()->id,
+                'keterangan' => 'Kebutuhan ATK',
+                'details' => [
+                    ['barang_nama' => 'Buku Tulis Sinar Dunia 38 Lembar', 'jumlah' => 2, 'metode' => 'piutang'],
+                    ['barang_nama' => 'Pulpen Snowman V-1', 'jumlah' => 3, 'metode' => 'piutang'],
+                ],
+            ],
+            [
+                'kode_transaksi' => 'TRX-004',
+                'karyawan_id' => $karyawans->where('nip', '1002')->first()->id ?? $karyawans->random()->id,
+                'keterangan' => 'Belanja mingguan',
+                'details' => [
+                    ['barang_nama' => 'Sabun Lifebuoy 80g', 'jumlah' => 3, 'metode' => 'tunai'],
+                    ['barang_nama' => 'Teh Botol Sosro 450ml', 'jumlah' => 2, 'metode' => 'tunai'],
+                ],
+            ],
+        ];
+
+        foreach ($transactions as $tData) {
+            $transaksi = Transaksi::updateOrCreate(
+                ['kode_transaksi' => $tData['kode_transaksi']],
+                [
+                    'karyawan_id' => $tData['karyawan_id'],
+                    'keterangan' => $tData['keterangan'],
+                ]
+            );
+
+            foreach ($tData['details'] as $dData) {
+                $barang = Barang::where('nama_barang', $dData['barang_nama'])->first();
+                if ($barang) {
+                    TransaksiDetail::updateOrCreate(
+                        [
+                            'transaksi_id' => $transaksi->id,
+                            'barang_id' => $barang->id,
+                        ],
+                        [
+                            'jumlah' => $dData['jumlah'],
+                            'harga_satuan' => $barang->harga_jual,
+                            'total_harga' => $dData['jumlah'] * $barang->harga_jual,
+                            'metode_pembayaran' => $dData['metode'],
+                        ]
+                    );
+                }
             }
-
-            $count = rand(1, 5);
-            $selectedBarangs = (array) array_rand(array_flip($barangIds), $count);
-
-            foreach ($selectedBarangs as $barangId) {
-                $barang = Barang::find($barangId);
-                $jumlah = rand(1, 3);
-
-                TransaksiDetail::create([
-                    'transaksi_id' => $transaksi->id,
-                    'barang_id' => $barang->id,
-                    'jumlah' => $jumlah,
-                    'harga_satuan' => $barang->harga_jual,
-                    'total_harga' => $jumlah * $barang->harga_jual,
-                    'metode_pembayaran' => fake()->randomElement(['tunai', 'piutang']),
-                    'created_at' => $randomDate,
-                    'updated_at' => $randomDate,
-                ]);
-            }
-        });
+        }
     }
 }

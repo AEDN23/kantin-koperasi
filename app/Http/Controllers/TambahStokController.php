@@ -46,9 +46,11 @@ class TambahStokController extends Controller
 
         TambahStok::create($request->all());
 
-        // Update stok di tabel barang
+        // Update stok & harga beli di tabel barang
         $barang = Barang::find($request->barang_id);
-        $barang->increment('stok', $request->jumlah);
+        $barang->stok += $request->jumlah;
+        $barang->harga_beli = $request->harga_beli; // Update ke harga beli terbaru
+        $barang->save();
 
         return redirect()->route('tambah-stok.index')
             ->with('success', 'Stok berhasil ditambahkan!');

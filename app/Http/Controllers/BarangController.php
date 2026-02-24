@@ -24,8 +24,10 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama_barang' => 'required|string|max:255',
+            'harga_beli' => 'required|integer|min:0',
             'harga_jual' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
+            'stok_minimal' => 'required|integer|min:0',
             'kategori_id' => 'nullable|exists:kategoris,id',
             'deskripsi' => 'nullable|string',
         ]);
@@ -52,8 +54,10 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama_barang' => 'required|string|max:255',
+            'harga_beli' => 'required|integer|min:0',
             'harga_jual' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
+            'stok_minimal' => 'required|integer|min:0',
             'kategori_id' => 'nullable|exists:kategoris,id',
             'deskripsi' => 'nullable|string',
         ]);

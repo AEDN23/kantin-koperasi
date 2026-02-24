@@ -25,6 +25,26 @@ class DashboardController extends Controller
                 ->whereYear('created_at', $selectedYear);
         })->sum('total_harga');
 
+        // Total Piutang (Periode Terpilih yang belum lunas)
+        $totalPiutang = TransaksiDetail::where('metode_pembayaran', 'piutang')
+            ->where('status_pembayaran', 'belum_lunas')
+            ->whereHas('transaksi', function ($q) use ($selectedMonth, $selectedYear) {
+                $q->whereMonth('created_at', $selectedMonth)
+                    ->whereYear('created_at', $selectedYear);
+            })->sum('total_harga');
+
+        // Perkiraan Profit (Periode Terpilih)
+        $totalProfit = TransaksiDetail::whereHas('transaksi', function ($q) use ($selectedMonth, $selectedYear) {
+            $q->whereMonth('created_at', $selectedMonth)
+                ->whereYear('created_at', $selectedYear);
+        })
+            ->join('barangs', 'transaksi_details.barang_id', '=', 'barangs.id')
+            ->selectRaw('SUM((transaksi_details.harga_satuan - barangs.harga_beli) * transaksi_details.jumlah) as profit')
+            ->first()->profit ?? 0;
+
+        // Barang Stok Rendah
+        $lowStockBarangs = Barang::whereRaw('stok <= stok_minimal')->get();
+
         // 1. Line Chart: Qty Barang Terjual Per Hari (1-31)
         $chartLineSales = TransaksiDetail::selectRaw('DATE(transaksis.created_at) as date, SUM(transaksi_details.jumlah) as total_qty')
             ->join('transaksis', 'transaksi_details.transaksi_id', '=', 'transaksis.id')
@@ -95,6 +115,9 @@ class DashboardController extends Controller
             'totalBarang',
             'totalTransaksi',
             'totalBelanja',
+            'totalPiutang',
+            'totalProfit',
+            'lowStockBarangs',
             'selectedMonth',
             'selectedYear',
             'chartLineSales',

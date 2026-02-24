@@ -90,7 +90,7 @@
                 position: fixed;
                 width: 280px;
                 z-index: 1040;
-                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
             }
 
             body.sidebar-toggled .sidebar {
@@ -174,6 +174,12 @@
                         <a class="nav-link {{ request()->routeIs('transaksi.riwayat') || request()->routeIs('transaksi.show') ? 'active' : '' }}"
                             href="{{ route('transaksi.riwayat') }}">
                             <i class="bi bi-clock-history"></i> Riwayat Transaksi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('piutang.*') ? 'active' : '' }}"
+                            href="{{ route('piutang.index') }}">
+                            <i class="bi bi-wallet2"></i> Pelunasan Piutang
                         </a>
                     </li>
                     <li class="nav-item mt-3">

@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->integer('harga_satuan');
             $table->integer('total_harga');
             $table->string('metode_pembayaran')->default('piutang'); // tunai, piutang
+            $table->string('status_pembayaran')->default('belum_lunas'); // lunas, belum_lunas
             $table->timestamps();
         });
     }

@@ -12,6 +12,16 @@ class KategoriSeeder extends Seeder
      */
     public function run(): void
     {
-        Kategori::factory()->count(10)->create();
+        $categories = [
+            ['nama_kategori' => 'Sembako', 'deskripsi' => 'Sembilan Bahan Pokok'],
+            ['nama_kategori' => 'Minuman', 'deskripsi' => 'Aneka minuman segar'],
+            ['nama_kategori' => 'Makanan Ringan', 'deskripsi' => 'Snack dan camilan'],
+            ['nama_kategori' => 'Alat Tulis Kantor', 'deskripsi' => 'Peralatan sekolah dan kantor'],
+            ['nama_kategori' => 'Peralatan Mandi', 'deskripsi' => 'Sabun, shampoo, dan lainnya'],
+        ];
+
+        foreach ($categories as $category) {
+            Kategori::updateOrCreate(['nama_kategori' => $category['nama_kategori']], $category);
+        }
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\TambahStokController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PiutangController;
 
 // Halaman utama redirect ke dashboard
 Route::get('/', function () {
@@ -28,6 +29,12 @@ Route::resource('tambah-stok', TambahStokController::class);
 // Transaksi
 Route::get('transaksi/riwayat', [TransaksiController::class, 'riwayat'])->name('transaksi.riwayat');
 Route::resource('transaksi', TransaksiController::class);
+
+// Pelunasan Piutang
+Route::get('piutang', [PiutangController::class, 'index'])->name('piutang.index');
+Route::get('piutang/{karyawan}', [PiutangController::class, 'show'])->name('piutang.show');
+Route::post('piutang/{karyawan}/bayar', [PiutangController::class, 'bayar'])->name('piutang.bayar');
+Route::post('piutang/{karyawan}/bayar-semua', [PiutangController::class, 'bayarSemua'])->name('piutang.bayar-semua');
 
 // Laporan
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');

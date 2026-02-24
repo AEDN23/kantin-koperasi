@@ -62,8 +62,10 @@
                         <th>No</th>
                         <th>Nama Karyawan</th>
                         <th>Departemen</th>
-                        <th>Jumlah Transaksi</th>
+                        <th>Jml Trx</th>
+                        <th>Total Piutang</th>
                         <th>Total Belanja</th>
+                        <th>Est. Profit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,11 +79,13 @@
                             </td>
                             <td>{{ $karyawan->departemen->nama_departemen ?? '-' }}</td>
                             <td>{{ $karyawan->jumlah_transaksi }}x</td>
+                            <td class="text-danger">Rp {{ number_format($karyawan->total_piutang, 0, ',', '.') }}</td>
                             <td>Rp {{ number_format($karyawan->total_belanja, 0, ',', '.') }}</td>
+                            <td class="text-success">Rp {{ number_format($karyawan->total_profit, 0, ',', '.') }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted">Tidak ada transaksi di bulan ini</td>
+                            <td colspan="7" class="text-center text-muted">Tidak ada transaksi di bulan ini</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -89,7 +93,9 @@
                     <tfoot>
                         <tr class="table-warning fw-bold">
                             <td colspan="4" class="text-end">Grand Total:</td>
+                            <td class="text-danger">Rp {{ number_format($laporans->sum('total_piutang'), 0, ',', '.') }}</td>
                             <td>Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                            <td class="text-success">Rp {{ number_format($laporans->sum('total_profit'), 0, ',', '.') }}</td>
                         </tr>
                     </tfoot>
                 @endif

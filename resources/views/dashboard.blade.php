@@ -65,46 +65,58 @@
     <div class="row g-4 mb-4">
         <!-- Stats Cards -->
         <div class="col-md-3">
-            <div class="card text-white h-100 border-0"
+            <div class="card text-white h-100 border-0 shadow-sm"
                 style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);">
                 <div class="card-body">
                     <h6 class="opacity-75 mb-1">Total Karyawan</h6>
-                    <h2 class="fw-bold mb-0">{{ $totalKaryawan }}</h2>
+                    <h2 class="fw-bold mb-0 text-white">{{ $totalKaryawan }}</h2>
                     <div class="mt-2 small"><i class="bi bi-people"></i> Terdaftar</div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white h-100 border-0"
+            <div class="card text-white h-100 border-0 shadow-sm"
                 style="background: linear-gradient(135deg, #2d5a87 0%, #3e7bb5 100%);">
                 <div class="card-body">
                     <h6 class="opacity-75 mb-1">Total Barang</h6>
-                    <h2 class="fw-bold mb-0">{{ $totalBarang }}</h2>
+                    <h2 class="fw-bold mb-0 text-white">{{ $totalBarang }}</h2>
                     <div class="mt-2 small"><i class="bi bi-box-seam"></i> Item Aktif</div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white h-100 border-0"
-                style="background: linear-gradient(135deg, #3e7bb5 0%, #4a90e2 100%);">
+            <div class="card text-white h-100 border-0 shadow-sm"
+                style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                 <div class="card-body">
-                    <h6 class="opacity-75 mb-1">Nota Transaksi</h6>
-                    <h2 class="fw-bold mb-0">{{ $totalTransaksi }}</h2>
-                    <div class="mt-2 small"><i class="bi bi-cart-check"></i> Periode Ini</div>
+                    <h6 class="opacity-75 mb-1 text-dark">Total Piutang</h6>
+                    <h2 class="fw-bold mb-0 text-dark">Rp {{ number_format($totalPiutang, 0, ',', '.') }}</h2>
+                    <div class="mt-2 small text-dark"><i class="bi bi-wallet2"></i> Belum Terbayar</div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-white h-100 border-0"
-                style="background: linear-gradient(135deg, #4a90e2 0%, #63b3ed 100%);">
+            <div class="card text-white h-100 border-0 shadow-sm"
+                style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
                 <div class="card-body">
-                    <h6 class="opacity-75 mb-1">Total Penjualan</h6>
-                    <h2 class="fw-bold mb-0">Rp {{ number_format($totalBelanja, 0, ',', '.') }}</h2>
-                    <div class="mt-2 small"><i class="bi bi-cash-stack"></i> Periode Ini</div>
+                    <h6 class="opacity-75 mb-1 text-dark">Estimasi Profit</h6>
+                    <h2 class="fw-bold mb-0 text-dark">Rp {{ number_format($totalProfit, 0, ',', '.') }}</h2>
+                    <div class="mt-2 small text-dark"><i class="bi bi-graph-up-arrow"></i> Laba Kotor</div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Alert Stok Rendah -->
+    @if($lowStockBarangs->count() > 0)
+        <div class="alert alert-warning border-0 shadow-sm mb-4 d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+            <div>
+                <strong class="d-block">Peringatan: Ada {{ $lowStockBarangs->count() }} barang dengan stok hampir
+                    habis!</strong>
+                <a href="{{ route('barang.index') }}" class="alert-link small">Lihat daftar barang &raquo;</a>
+            </div>
+        </div>
+    @endif
 
     <!-- Line Chart Row -->
     <div class="row g-4 mb-4">

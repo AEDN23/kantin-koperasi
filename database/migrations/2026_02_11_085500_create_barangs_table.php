@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,12 +14,14 @@ return new class extends Migration
             $table->id();
             $table->string('kode_barang');
             $table->string('nama_barang');
+            $table->integer('harga_beli')->default(0);
             $table->integer('harga_jual');
             $table->integer('stok');
+            $table->integer('stok_minimal')->default(5);
             $table->foreignId('kategori_id')
-            ->nullable()
-            ->constrained('kategoris')
-            ->onDelete('set null');
+                ->nullable()
+                ->constrained('kategoris')
+                ->onDelete('set null');
             $table->string('deskripsi')->nullable();
             $table->timestamps();
         });

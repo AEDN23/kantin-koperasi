@@ -21,6 +21,7 @@
                         <th>No</th>
                         <th>Nama Barang</th>
                         <th>Kategori</th>
+                        <th>Harga Beli</th>
                         <th>Harga Jual</th>
                         <th>Stok</th>
                         <th>Aksi</th>
@@ -32,11 +33,18 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $barang->nama_barang }}</td>
                             <td>{{ $barang->kategori->nama_kategori ?? '-' }}</td>
+                            <td>Rp {{ number_format($barang->harga_beli, 0, ',', '.') }}</td>
                             <td>Rp {{ number_format($barang->harga_jual, 0, ',', '.') }}</td>
                             <td>
-                                <span class="badge {{ $barang->stok > 0 ? 'bg-success' : 'bg-danger' }}">
-                                    {{ $barang->stok }}
-                                </span>
+                                @if($barang->stok <= $barang->stok_minimal)
+                                    <span class="badge bg-danger" title="Stok Menipis!">
+                                        {{ $barang->stok }} <i class="bi bi-exclamation-triangle"></i>
+                                    </span>
+                                @else
+                                    <span class="badge bg-success">
+                                        {{ $barang->stok }}
+                                    </span>
+                                @endif
                             </td>
                             <td>
                                 <a href="{{ route('barang.edit', $barang) }}" class="btn btn-sm btn-warning">
@@ -52,7 +60,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Belum ada data barang</td>
+                            <td colspan="7" class="text-center text-muted">Belum ada data barang</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -24,9 +24,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="kategori_id" class="form-label">Kategori</label>
                         <select class="form-select @error('kategori_id') is-invalid @enderror" id="kategori_id"
                             name="kategori_id">
@@ -41,7 +39,17 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-4 mb-3">
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="harga_beli" class="form-label">Harga Beli <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control @error('harga_beli') is-invalid @enderror" id="harga_beli"
+                            name="harga_beli" value="{{ old('harga_beli', $barang->harga_beli) }}" min="0" required>
+                        @error('harga_beli')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-3 mb-3">
                         <label for="harga_jual" class="form-label">Harga Jual <span class="text-danger">*</span></label>
                         <input type="number" class="form-control @error('harga_jual') is-invalid @enderror" id="harga_jual"
                             name="harga_jual" value="{{ old('harga_jual', $barang->harga_jual) }}" min="0" required>
@@ -49,11 +57,20 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="stok" class="form-label">Stok <span class="text-danger">*</span></label>
                         <input type="number" class="form-control @error('stok') is-invalid @enderror" id="stok" name="stok"
                             value="{{ old('stok', $barang->stok) }}" min="0" required>
                         @error('stok')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="stok_minimal" class="form-label">Stok Minimal <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control @error('stok_minimal') is-invalid @enderror"
+                            id="stok_minimal" name="stok_minimal"
+                            value="{{ old('stok_minimal', $barang->stok_minimal ?? 5) }}" min="0" required>
+                        @error('stok_minimal')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

@@ -141,6 +141,7 @@ class TransaksiController extends Controller
                     'harga_satuan' => $barang->harga_jual,
                     'total_harga' => $barang->harga_jual * $item['jumlah'],
                     'metode_pembayaran' => $item['metode_pembayaran'],
+                    'status_pembayaran' => $item['metode_pembayaran'] == 'tunai' ? 'lunas' : 'belum_lunas',
                 ]);
 
                 // Kurangi stok

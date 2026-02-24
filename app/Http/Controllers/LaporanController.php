@@ -24,7 +24,7 @@ class LaporanController extends Controller
             'transaksis' => function ($query) use ($bulan, $tahun) {
                 $query->whereMonth('created_at', $bulan)
                     ->whereYear('created_at', $tahun)
-                    ->with('transaksiDetails');
+                    ->with('transaksiDetails.barang');
             }
         ])
             ->whereHas('transaksis', function ($query) use ($bulan, $tahun) {
@@ -38,10 +38,21 @@ class LaporanController extends Controller
 
         $laporans = $query->get()
             ->map(function ($karyawan) {
-                $karyawan->total_belanja = $karyawan->transaksis
-                    ->flatMap->transaksiDetails
-                    ->sum('total_harga');
+                $details = $karyawan->transaksis->flatMap->transaksiDetails;
+
+                $karyawan->total_belanja = $details->sum('total_harga');
                 $karyawan->jumlah_transaksi = $karyawan->transaksis->count();
+
+                // Hitung Piutang (khusus di periode ini yang BELUM LUNAS)
+                $karyawan->total_piutang = $details->where('metode_pembayaran', 'piutang')
+                    ->where('status_pembayaran', 'belum_lunas')
+                    ->sum('total_harga');
+
+                // Hitung Estimasi Profit
+                $karyawan->total_profit = $details->sum(function ($d) {
+                    return ($d->harga_satuan - ($d->barang->harga_beli ?? 0)) * $d->jumlah;
+                });
+
                 return $karyawan;
             });
 
