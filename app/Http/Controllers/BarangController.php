@@ -89,7 +89,19 @@ class BarangController extends Controller
             return $detail->transaksi->created_at ?? $detail->created_at;
         });
 
-        return view('barang.show', compact('barang', 'salesHistory'));
+        // Hitung total profit (Semua waktu)
+        $total_profit = $salesHistory->sum(function ($detail) use ($barang) {
+            return $detail->total_harga - ($detail->jumlah * $barang->harga_beli);
+        });
+
+        // Hitung profit bulan ini
+        $month_profit = $salesHistory->filter(function ($detail) {
+            return $detail->transaksi && $detail->transaksi->created_at->isCurrentMonth();
+        })->sum(function ($detail) use ($barang) {
+            return $detail->total_harga - ($detail->jumlah * $barang->harga_beli);
+        });
+
+        return view('barang.show', compact('barang', 'salesHistory', 'total_profit', 'month_profit'));
     }
 
     public function edit(Barang $barang)

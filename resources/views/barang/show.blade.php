@@ -56,16 +56,50 @@
                     </div>
 
                     <div class="row g-3 mt-2">
-                        <div class="col-sm-6">
+                        <div class="col-md-4">
                             <div class="p-3 border rounded-4 bg-white shadow-sm h-100 border-start border-4 border-dark">
                                 <label class="text-muted small fw-bold text-uppercase d-block mb-1">Harga Beli</label>
                                 <h4 class="fw-bold text-dark mb-0">Rp {{ number_format($barang->harga_beli, 0, ',', '.') }}</h4>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-md-4">
                             <div class="p-3 border rounded-4 bg-white shadow-sm h-100 border-start border-4 border-primary">
                                 <label class="text-muted small fw-bold text-uppercase d-block mb-1">Harga Jual</label>
                                 <h4 class="fw-bold text-primary mb-0">Rp {{ number_format($barang->harga_jual, 0, ',', '.') }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            @php $margin = $barang->harga_jual - $barang->harga_beli @endphp
+                            <div class="p-3 border rounded-4 bg-white shadow-sm h-100 border-start border-4 {{ $margin >= 0 ? 'border-success' : 'border-danger' }}">
+                                <label class="text-muted small fw-bold text-uppercase d-block mb-1">Profit / Item</label>
+                                <h4 class="fw-bold {{ $margin >= 0 ? 'text-success' : 'text-danger' }} mb-0">
+                                    Rp {{ number_format($margin, 0, ',', '.') }}
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <div class="alert {{ $month_profit >= 0 ? 'alert-success' : 'alert-danger' }} border-0 rounded-4 shadow-sm h-100 d-flex align-items-center p-3 mb-0">
+                                <div class="me-3 rounded-circle bg-white p-2 shadow-sm">
+                                    <i class="bi bi-calendar-check fs-4 {{ $month_profit >= 0 ? 'text-success' : 'text-danger' }}"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-uppercase fw-bold mb-0 small opacity-75">Profit Bulan Ini</h6>
+                                    <h4 class="fw-bold mb-0">Rp {{ number_format($month_profit, 0, ',', '.') }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert {{ $total_profit >= 0 ? 'alert-primary' : 'alert-danger' }} border-0 rounded-4 shadow-sm h-100 d-flex align-items-center p-3 mb-0">
+                                <div class="me-3 rounded-circle bg-white p-2 shadow-sm">
+                                    <i class="bi bi-graph-up-arrow fs-4 {{ $total_profit >= 0 ? 'text-primary' : 'text-danger' }}"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-uppercase fw-bold mb-0 small opacity-75">Total Keuntungan</h6>
+                                    <h4 class="fw-bold mb-0">Rp {{ number_format($total_profit, 0, ',', '.') }}</h4>
+                                </div>
                             </div>
                         </div>
                     </div>
