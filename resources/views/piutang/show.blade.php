@@ -100,106 +100,115 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @forelse($piutangs as $p)
-                                                    <tr>
-                                                        <td>
-                                                            <input type="checkbox" name="ids[]" value="{{ $p->id }}" class="form-check-input item-check">
-                                                        </td>
-                                                        <td>
-                                                            <div class="fw-bold">{{ $p->transaksi->created_at->format('d M Y') }}</div>
-                                                            <small class="text-muted">{{ $p->transaksi->created_at->format('H:i') }}</small>
-                                                        </td>
-                                                        <td>
-                                                            <div class="fw-bold text-primary">{{ $p->barang->nama_barang ?? 'Barang Terhapus' }}</div>
-                                                            <small class="text-muted">{{ $p->transaksi->kode_transaksi }} | {{ $p->jumlah }} item</small>
-                                                        </td>
-                                                        <td class="text-end fw-bold">Rp {{ number_format($p->total_harga, 0, ',', '.') }}</td>
-                                                        <td class="text-center">
-                                                            @php
-                                                                $days = $p->transaksi->created_at->diffInDays(now());
-                                                            @endphp
-                                                            @if($days == 0)
-                                                                <span class="badge bg-info">Hari ini</span>
-                                                            @elseif($days < 7)
-                                                                <span class="badge bg-warning text-dark">{{ $days }} hari</span>
-                                                            @else
-                                                                <span class="badge bg-danger">{{ $days }} hari</span>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="5" class="text-center py-5 text-muted">
-                                                            <i class="bi bi-emoji-smile fs-1 d-block mb-2"></i>
-                                                            Tidak ada piutang aktif.
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    @if($piutangs->count() > 0)
-                                        <div class="d-flex justify-content-between mt-3 p-3 bg-light rounded-3 border">
-                                            <div>
-                                                <span class="fw-bold fs-5 text-primary" id="selectedCount">0</span> item terpilih
-                                            </div>
-                                            <button type="submit" id="btnPaySelected" class="btn btn-primary px-4 fw-bold shadow-sm" disabled>
-                                                <i class="bi bi-wallet2 me-1"></i> LUNASI TERPILIH
-                                            </button>
-                                        </div>
-                                    @endif
-                                </form>
-                            </div>
-
-                            <!-- Tab Sudah Lunas -->
-                            <div class="tab-pane fade" id="pills-paid" role="tabpanel">
-                                <h5 class="fw-bold mb-3 text-success">Riwayat Pelunasan Terakhir</h5>
-                                <div class="table-responsive">
-                                    <table class="table table-hover align-middle">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Waktu Transaksi</th>
-                                                <th>Item & Kode</th>
-                                                <th class="text-end">Total</th>
-                                                <th class="text-center">Tanggal Lunas</th>
-                                                <th class="text-center">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse($piutangs_lunas as $pl)
+                                            @forelse($piutangs as $p)
                                                 <tr>
                                                     <td>
-                                                        <div class="small fw-bold">{{ $pl->transaksi->created_at->format('d/m/Y') }}</div>
-                                                        <small class="text-muted">{{ $pl->transaksi->kode_transaksi }}</small>
+                                                        <input type="checkbox" name="ids[]" value="{{ $p->id }}" 
+                                                            class="form-check-input item-check" 
+                                                            data-price="{{ $p->total_harga }}">
                                                     </td>
                                                     <td>
-                                                        <div class="fw-bold">{{ $pl->barang->nama_barang ?? 'Barang Terhapus' }}</div>
-                                                        <small class="text-muted">{{ $pl->jumlah }} item</small>
+                                                        <div class="fw-bold">{{ $p->transaksi->created_at->format('d M Y') }}</div>
+                                                        <small class="text-muted">{{ $p->transaksi->created_at->format('H:i') }}</small>
                                                     </td>
-                                                    <td class="text-end">Rp {{ number_format($pl->total_harga, 0, ',', '.') }}</td>
-                                                    <td class="text-center">
-                                                        <div class="small fw-bold">{{ $pl->updated_at->format('d/m/Y') }}</div>
-                                                        <small class="text-muted">{{ $pl->updated_at->format('H:i') }}</small>
+                                                    <td>
+                                                        <div class="fw-bold text-primary">{{ $p->barang->nama_barang ?? 'Barang Terhapus' }}</div>
+                                                        <small class="text-muted">{{ $p->transaksi->kode_transaksi }} | {{ $p->jumlah }} item</small>
                                                     </td>
+                                                    <td class="text-end fw-bold">Rp {{ number_format($p->total_harga, 0, ',', '.') }}</td>
                                                     <td class="text-center">
-                                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Lunas</span>
+                                                        @php
+                                                            $days = $p->transaksi->created_at->diffInDays(now());
+                                                        @endphp
+                                                        @if($days == 0)
+                                                            <span class="badge bg-info">Hari ini</span>
+                                                        @elseif($days < 7)
+                                                            <span class="badge bg-warning text-dark">{{ $days }} hari</span>
+                                                        @else
+                                                            <span class="badge bg-danger">{{ $days }} hari</span>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="5" class="text-center py-5 text-muted">Belum ada riwayat pelunasan.</td>
+                                                    <td colspan="5" class="text-center py-5 text-muted">
+                                                        <i class="bi bi-emoji-smile fs-1 d-block mb-2"></i>
+                                                        Tidak ada piutang aktif.
+                                                    </td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
                                     </table>
                                 </div>
+
+                                @if($piutangs->count() > 0)
+                                    <div class="d-flex justify-content-between align-items-center mt-3 p-3 bg-light rounded-3 border">
+                                        <div>
+                                            <span class="fw-bold fs-5 text-primary" id="selectedCount">0</span> item terpilih
+                                            <span class="mx-2 text-muted">|</span>
+                                            Total: <span class="fw-bold fs-5 text-success">Rp <span id="selectedTotal">0</span></span>
+                                        </div>
+                                        <button type="submit" id="btnPaySelected" class="btn btn-primary px-4 fw-bold shadow-sm" disabled>
+                                            <i class="bi bi-wallet2 me-1"></i> LUNASI TERPILIH
+                                        </button>
+                                    </div>
+                                @endif
+                            </form>
+                        </div>
+
+                        <!-- Tab Sudah Lunas -->
+                        <div class="tab-pane fade" id="pills-paid" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0 text-success">Riwayat Pelunasan Terakhir</h5>
+                                <div class="badge bg-success py-2 px-3">
+                                    Total Terbayar: Rp {{ number_format($piutangs_lunas->sum('total_harga'), 0, ',', '.') }}
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Waktu Transaksi</th>
+                                            <th>Item & Kode</th>
+                                            <th class="text-end">Total</th>
+                                            <th class="text-center">Tanggal Lunas</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($piutangs_lunas as $pl)
+                                            <tr>
+                                                <td>
+                                                    <div class="small fw-bold">{{ $pl->transaksi->created_at->format('d/m/Y') }}</div>
+                                                    <small class="text-muted">{{ $pl->transaksi->kode_transaksi }}</small>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-bold">{{ $pl->barang->nama_barang ?? 'Barang Terhapus' }}</div>
+                                                    <small class="text-muted">{{ $pl->jumlah }} item</small>
+                                                </td>
+                                                <td class="text-end">Rp {{ number_format($pl->total_harga, 0, ',', '.') }}</td>
+                                                <td class="text-center">
+                                                    <div class="small fw-bold">{{ $pl->updated_at->format('d/m/Y') }}</div>
+                                                    <small class="text-muted">{{ $pl->updated_at->format('H:i') }}</small>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Lunas</span>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center py-5 text-muted">Belum ada riwayat pelunasan.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -209,10 +218,25 @@
             const $itemChecks = $('.item-check');
             const $btnPay = $('#btnPaySelected');
             const $countDisplay = $('#selectedCount');
+            const $totalDisplay = $('#selectedTotal');
+
+            function formatRupiah(number) {
+                return new Intl.NumberFormat('id-ID').format(number);
+            }
 
             function updateUI() {
-                const checkedCount = $itemChecks.filter(':checked').length;
+                let checkedCount = 0;
+                let totalPrice = 0;
+
+                $itemChecks.each(function() {
+                    if ($(this).is(':checked')) {
+                        checkedCount++;
+                        totalPrice += parseInt($(this).data('price'));
+                    }
+                });
+
                 $countDisplay.text(checkedCount);
+                $totalDisplay.text(formatRupiah(totalPrice));
                 $btnPay.prop('disabled', checkedCount === 0);
             }
 

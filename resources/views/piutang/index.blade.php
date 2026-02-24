@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold text-dark">Daftar Piutang Karyawan</h2>
-            <p class="text-muted">Kelola pelunasan piutang atau pemotongan gaji</p>
+            <p class="text-muted">Kelola pelunasan piutang dan pantau riwayat pelunasan</p>
         </div>
     </div>
 
@@ -22,7 +22,8 @@
                             <th>No</th>
                             <th>Nama Karyawan</th>
                             <th>Departemen</th>
-                            <th class="text-end">Total Piutang</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-end">Sisa Piutang</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -35,20 +36,29 @@
                                     <small class="text-muted">NIP: {{ $karyawan->nip }}</small>
                                 </td>
                                 <td>{{ $karyawan->departemen->nama_departemen ?? '-' }}</td>
-                                <td class="text-end fw-bold text-danger">
+                                <td class="text-center">
+                                    @if($karyawan->total_piutang > 0)
+                                        <span class="badge bg-danger">Belum Lunas</span>
+                                    @else
+                                        <span class="badge bg-success"><i class="bi bi-check-lg"></i> Lunas</span>
+                                    @endif
+                                </td>
+                                <td class="text-end fw-bold {{ $karyawan->total_piutang > 0 ? 'text-danger' : 'text-muted' }}">
                                     Rp {{ number_format($karyawan->total_piutang, 0, ',', '.') }}
                                 </td>
                                 <td class="text-center">
-                                    <a href="{{ route('piutang.show', $karyawan) }}" class="btn btn-primary btn-sm px-3">
-                                        <i class="bi bi-eye"></i> Detail & Pelunasan
+                                    <a href="{{ route('piutang.show', $karyawan) }}"
+                                        class="btn btn-primary btn-sm px-3 shadow-sm">
+                                        <i class="bi bi-eye"></i>
+                                        {{ $karyawan->total_piutang > 0 ? 'Detail & Lunasi' : 'Lihat Riwayat' }}
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-4 text-muted">
-                                    <i class="bi bi-check-circle fs-2 d-block mb-2 text-success"></i>
-                                    Tidak ada piutang yang belum lunas.
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="bi bi-info-circle fs-2 d-block mb-2 text-primary"></i>
+                                    Belum ada karyawan yang tercatat memiliki piutang.
                                 </td>
                             </tr>
                         @endforelse

@@ -11,13 +11,21 @@ class PiutangController extends Controller
 {
     public function index()
     {
-        // Ambil list karyawan yang punya piutang belum lunas
+        // Ambil list karyawan yang PERNAH punya transaksi piutang
         $karyawans = Karyawan::whereHas('transaksis.transaksiDetails', function ($q) {
-            $q->where('status_pembayaran', 'belum_lunas');
+            $q->where('metode_pembayaran', 'piutang');
         })->with(['departemen'])->get()->map(function ($karyawan) {
+            // Hitung sisa piutang (belum lunas)
             $karyawan->total_piutang = TransaksiDetail::whereHas('transaksi', function ($q) use ($karyawan) {
                 $q->where('karyawan_id', $karyawan->id);
             })->where('status_pembayaran', 'belum_lunas')->sum('total_harga');
+
+            // Hitung yang sudah dilunasi (untuk indikator)
+            $karyawan->total_lunas = TransaksiDetail::whereHas('transaksi', function ($q) use ($karyawan) {
+                $q->where('karyawan_id', $karyawan->id);
+            })->where('metode_pembayaran', 'piutang')
+                ->where('status_pembayaran', 'lunas')->sum('total_harga');
+
             return $karyawan;
         });
 

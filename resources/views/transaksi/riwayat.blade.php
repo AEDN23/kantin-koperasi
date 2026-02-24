@@ -100,7 +100,7 @@
                 @if($transaksis->count() > 0)
                     <tfoot>
                         <tr class="table-warning fw-bold">
-                            <td colspan="4" class="text-end">Total Semua:</td>
+                            <td colspan="5" class="text-end">Total Semua:</td>
                             <td>Rp {{ number_format($transaksis->sum('total_belanja'), 0, ',', '.') }}</td>
                             <td colspan="2"></td>
                         </tr>
