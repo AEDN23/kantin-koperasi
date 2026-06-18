@@ -142,7 +142,7 @@
                                                     <td class="text-end fw-bold">Rp {{ number_format($p->total_harga, 0, ',', '.') }}</td>
                                                     <td class="text-center">
                                                         @php
-                                                            $days = $p->transaksi->created_at->diffInDays(now());
+                                                            $days = (int) $p->transaksi->created_at->diffInDays(now());
                                                         @endphp
                                                         @if($days == 0)
                                                             <span class="badge bg-info">Hari ini</span>
