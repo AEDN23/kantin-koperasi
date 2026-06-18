@@ -30,6 +30,7 @@ Route::resource('tambah-stok', TambahStokController::class);
 
 // Transaksi
 Route::get('transaksi/riwayat', [TransaksiController::class, 'riwayat'])->name('transaksi.riwayat');
+Route::post('transaksi/scan', [TransaksiController::class, 'scanBarcode'])->name('transaksi.scan');
 Route::resource('transaksi', TransaksiController::class);
 
 // Pelunasan Piutang

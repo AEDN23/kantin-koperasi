@@ -23,6 +23,36 @@ class TransaksiController extends Controller
         return view('transaksi.create', compact('karyawans', 'barangs'));
     }
 
+    /**
+     * Scan barcode — lookup barang berdasarkan qr_code
+     */
+    public function scanBarcode(Request $request)
+    {
+        $request->validate([
+            'qr_code' => 'required|string',
+        ]);
+
+        $barang = Barang::where('qr_code', $request->qr_code)->first();
+
+        if (!$barang) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Barang dengan kode "' . $request->qr_code . '" tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'barang' => [
+                'id' => $barang->id,
+                'nama_barang' => $barang->nama_barang,
+                'qr_code' => $barang->qr_code,
+                'harga_jual' => $barang->harga_jual,
+                'stok' => $barang->stok,
+            ],
+        ]);
+    }
+
     public function create()
     {
         return redirect()->route('transaksi.index');

@@ -40,6 +40,11 @@
                                 <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
                                     {{ $barang->kode_barang }}
                                 </span>
+                                @if($barang->qr_code)
+                                <span class="badge bg-dark px-3 py-2 rounded-pill shadow-sm ms-1" title="QR / Barcode">
+                                    <i class="bi bi-upc-scan me-1"></i>{{ $barang->qr_code }}
+                                </span>
+                                @endif
                             </div>
                         </div>
                         <div class="col-md-8">

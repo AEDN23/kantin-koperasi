@@ -41,6 +41,22 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="qr_code" class="form-label">
+                            <i class="bi bi-upc-scan me-1"></i>QR Code / Barcode
+                        </label>
+                        <input type="text" class="form-control @error('qr_code') is-invalid @enderror" id="qr_code"
+                            name="qr_code" value="{{ old('qr_code', $barang->qr_code) }}"
+                            placeholder="Kosongkan untuk generate otomatis">
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>Isi sesuai barcode produk, atau kosongkan agar sistem generate otomatis.
+                        </div>
+                        @error('qr_code')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-3 mb-3">
                         <label for="harga_beli" class="form-label">Harga Beli <span class="text-danger">*</span></label>
                         <input type="number" class="form-control @error('harga_beli') is-invalid @enderror" id="harga_beli"

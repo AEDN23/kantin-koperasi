@@ -47,6 +47,7 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama_barang' => 'required|string|max:255',
+            'qr_code' => 'nullable|string|max:255|unique:barangs,qr_code',
             'harga_beli' => 'required|integer|min:0',
             'harga_jual' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
@@ -67,6 +68,14 @@ class BarangController extends Controller
         }
 
         $data['kode_barang'] = $kodeBarang;
+
+        // Generate QR Code otomatis jika kosong
+        if (empty($data['qr_code'])) {
+            do {
+                $qrCode = 'QR-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6));
+            } while (Barang::where('qr_code', $qrCode)->exists());
+            $data['qr_code'] = $qrCode;
+        }
 
         Barang::create($data);
 
@@ -114,6 +123,7 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama_barang' => 'required|string|max:255',
+            'qr_code' => 'nullable|string|max:255|unique:barangs,qr_code,' . $barang->id,
             'harga_beli' => 'required|integer|min:0',
             'harga_jual' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
@@ -122,7 +132,17 @@ class BarangController extends Controller
             'deskripsi' => 'nullable|string',
         ]);
 
-        $barang->update($request->all());
+        $data = $request->all();
+
+        // Generate QR Code otomatis jika dikosongkan
+        if (empty($data['qr_code'])) {
+            do {
+                $qrCode = 'QR-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6));
+            } while (Barang::where('qr_code', $qrCode)->where('id', '!=', $barang->id)->exists());
+            $data['qr_code'] = $qrCode;
+        }
+
+        $barang->update($data);
 
         return redirect()->route('barang.index')
             ->with('success', 'Barang berhasil diupdate!');

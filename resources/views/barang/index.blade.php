@@ -29,6 +29,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Barang</th>
+                            <th>QR / Barcode</th>
                             <th>Kategori</th>
                             <th class="text-end">Harga Beli</th>
                             <th class="text-end">Harga Jual</th>
@@ -43,6 +44,9 @@
                                 <td>
                                     <div class="fw-bold">{{ $barang->nama_barang }}</div>
                                     <small class="text-muted">{{ $barang->kode_barang }}</small>
+                                </td>
+                                <td>
+                                    <code class="bg-light px-2 py-1 rounded">{{ $barang->qr_code ?? '-' }}</code>
                                 </td>
                                 <td>{{ $barang->kategori->nama_kategori ?? '-' }}</td>
                                 <td class="text-end">Rp {{ number_format($barang->harga_beli, 0, ',', '.') }}</td>
@@ -80,7 +84,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">
+                                <td colspan="8" class="text-center py-5 text-muted">
                                     <i class="bi bi-box-seam fs-1 d-block mb-3"></i>
                                     Belum ada data barang. Silakan tambah atau import dari Excel.
                                 </td>
