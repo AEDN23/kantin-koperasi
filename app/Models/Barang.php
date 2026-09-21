@@ -41,4 +41,36 @@ class Barang extends Model
     {
         return $this->hasMany(TambahStok::class);
     }
+
+    // Accessor: Harga Beli Terbaru
+    public function getHargaBeliTerbaruAttribute()
+    {
+        $latest = $this->tambahStoks->sortByDesc('id')->first();
+        return $latest ? $latest->harga_beli : $this->harga_beli;
+    }
+
+    // Accessor: Harga Beli Lama
+    public function getHargaBeliLamaAttribute()
+    {
+        $stoks = $this->tambahStoks->sortByDesc('id')->values();
+        if ($stoks->count() >= 2) {
+            return $stoks[1]->harga_beli;
+        }
+        return $this->harga_beli;
+    }
+
+    // Accessor: Harga Beli Rata Rata (Weighted Average)
+    public function getHargaBeliRataRataAttribute()
+    {
+        $stoks = $this->tambahStoks;
+        if ($stoks->isEmpty()) {
+            return $this->harga_beli;
+        }
+        $totalJumlah = $stoks->sum('jumlah');
+        if ($totalJumlah > 0) {
+            $totalCost = $stoks->sum(fn($ts) => $ts->jumlah * $ts->harga_beli);
+            return (int) round($totalCost / $totalJumlah);
+        }
+        return $this->harga_beli;
+    }
 }

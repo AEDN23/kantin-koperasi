@@ -59,7 +59,7 @@
             <table class="table table-hover searchable-table">
                 <thead class="table-dark">
                     <tr>
-                        <th>No</th>
+                        <th data-orderable="false" style="width: 50px;">No</th>
                         <th>Nama Karyawan</th>
                         <th>Departemen</th>
                         <th>Jml Trx</th>

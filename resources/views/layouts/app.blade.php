@@ -13,6 +13,8 @@
     <!-- Select2 CSS -->
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/select2-bootstrap-5-theme.min.css') }}" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
     @stack('styles')
     <style>
         .sidebar {
@@ -228,9 +230,11 @@
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
+    <!-- DataTables JS -->
+    <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 
     <script>
-        // Global live search untuk tabel
         $(document).ready(function () {
             // Sidebar Toggle Logic
             if (localStorage.getItem('sidebar-state') === 'toggled') {
@@ -254,11 +258,40 @@
                 }
             }
 
-            $('#searchInput').on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                $('.searchable-table tbody tr').filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
+            // Inisialisasi DataTables otomatis untuk tabel kelas .datatable atau .searchable-table
+            $('.searchable-table, .datatable').each(function () {
+                var $table = $(this);
+                if (!$.fn.DataTable.isDataTable(this)) {
+                    var dt = $table.DataTable({
+                        language: {
+                            search: "Cari:",
+                            searchPlaceholder: "🔍 Ketik untuk mencari...",
+                            lengthMenu: "Tampilkan _MENU_ data",
+                            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                            infoEmpty: "Menampilkan 0 data",
+                            infoFiltered: "(disaring dari _MAX_ total data)",
+                            zeroRecords: "Tidak ada data yang cocok ditemukan",
+                            paginate: {
+                                first: "«",
+                                last: "»",
+                                next: "›",
+                                previous: "‹"
+                            }
+                        },
+                        pageLength: 10,
+                        order: [],
+                        responsive: true,
+                        autoWidth: false
+                    });
+
+                    // Sambungkan input custom #searchInput jika ada pada halaman
+                    var $customSearch = $('#searchInput');
+                    if ($customSearch.length) {
+                        $customSearch.off('keyup search input').on('keyup search input', function () {
+                            dt.search(this.value).draw();
+                        });
+                    }
+                }
             });
 
             // SweetAlert for Import Results
@@ -266,11 +299,11 @@
                 Swal.fire({
                     title: 'Import Berhasil!',
                     html: `
-                                            <div class="text-start">
-                                                <p class="mb-1 text-success">✅ Sukses: <strong>{{ session('import_results')['success'] }}</strong></p>
-                                                <p class="mb-0 text-danger">⚠️ Duplikasi (Skip): <strong>{{ session('import_results')['duplicate'] }}</strong></p>
-                                            </div>
-                                        `,
+                        <div class="text-start">
+                            <p class="mb-1 text-success">✅ Sukses: <strong>{{ session('import_results')['success'] }}</strong></p>
+                            <p class="mb-0 text-danger">⚠️ Duplikasi (Skip): <strong>{{ session('import_results')['duplicate'] }}</strong></p>
+                        </div>
+                    `,
                     icon: 'success',
                     confirmButtonText: 'Oke',
                     confirmButtonColor: '#198754'

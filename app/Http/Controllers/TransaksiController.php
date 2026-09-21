@@ -14,7 +14,7 @@ class TransaksiController extends Controller
     public function index()
     {
         $karyawans = Karyawan::with('departemen')
-            ->join('departemens', 'karyawans.departemen_id', '=', 'departemens.id')
+            ->leftJoin('departemens', 'karyawans.departemen_id', '=', 'departemens.id')
             ->orderBy('departemens.nama_departemen')
             ->orderBy('karyawans.nama_karyawan')
             ->select('karyawans.*')

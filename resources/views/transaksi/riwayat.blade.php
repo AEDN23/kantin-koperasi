@@ -51,14 +51,14 @@
             <table class="table table-hover searchable-table">
                 <thead class="table-dark">
                     <tr>
-                        <th>No</th>
+                        <th data-orderable="false" style="width: 50px;">No</th>
                         <th>Kode Transaksi</th>
                         <th>Karyawan</th>
                         <th>Jumlah Item</th>
                         <th>Total Belanja</th>
                         <th>Metode</th>
                         <th>Tanggal</th>
-                        <th>Aksi</th>
+                        <th data-orderable="false" style="width: 100px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,7 +78,7 @@
                                     <span class="badge bg-secondary">{{ $transaksi->metode_pembayaran }}</span>
                                 @endif
                             </td>
-                            <td>{{ $transaksi->created_at->format('d/m/Y H:i') }}</td>
+                            <td>{{ $transaksi->created_at?->format('d/m/Y H:i') ?? '-' }}</td>
                             <td>
                                 <a href="{{ route('transaksi.show', $transaksi) }}" class="btn btn-sm btn-info text-white">
                                     <i class="bi bi-eye"></i>

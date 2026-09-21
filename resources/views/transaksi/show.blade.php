@@ -60,7 +60,7 @@
                 </tr>
                 <tr>
                     <th>Tanggal</th>
-                    <td>{{ $transaksi->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $transaksi->created_at?->format('d/m/Y H:i') ?? '-' }}</td>
                 </tr>
                 <tr>
                     <th>Keterangan</th>

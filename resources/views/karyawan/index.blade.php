@@ -18,13 +18,13 @@
             <table class="table table-hover searchable-table">
                 <thead class="table-dark">
                     <tr>
-                        <th>No</th>
+                        <th data-orderable="false" style="width: 50px;">No</th>
                         <th>NIP</th>
                         <th>Nama Karyawan</th>
                         <th>Departemen</th>
                         <th>No HP</th>
                         <th>Email</th>
-                        <th>Aksi</th>
+                        <th data-orderable="false" style="width: 120px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>

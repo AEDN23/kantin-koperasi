@@ -6,11 +6,17 @@ use App\Models\Barang;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use App\Exports\BarangTemplateExport;
+use App\Exports\BarangExport;
 use App\Imports\BarangImport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class BarangController extends Controller
 {
+    public function export()
+    {
+        return Excel::download(new BarangExport, 'data_barang_' . date('Ymd_His') . '.xlsx');
+    }
+
     public function import(Request $request)
     {
         $request->validate([
@@ -33,7 +39,7 @@ class BarangController extends Controller
 
     public function index()
     {
-        $barangs = Barang::with('kategori')->latest()->get();
+        $barangs = Barang::with(['kategori', 'tambahStoks'])->latest()->get();
         return view('barang.index', compact('barangs'));
     }
 
@@ -154,5 +160,20 @@ class BarangController extends Controller
 
         return redirect()->route('barang.index')
             ->with('success', 'Barang berhasil dihapus!');
+    }
+
+    public function generateQrCode(Barang $barang)
+    {
+        if (empty($barang->qr_code)) {
+            do {
+                $qrCode = 'QR-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6));
+            } while (Barang::where('qr_code', $qrCode)->exists());
+
+            $barang->update(['qr_code' => $qrCode]);
+
+            return redirect()->back()->with('success', 'QR Code berhasil dibuat: ' . $qrCode);
+        }
+
+        return redirect()->back()->with('info', 'Barang ini sudah memiliki QR Code: ' . $barang->qr_code);
     }
 }

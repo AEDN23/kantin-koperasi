@@ -33,19 +33,45 @@
                 <div class="card-body">
                     <div class="row mb-4">
                         <div class="col-md-4 text-center mb-3 mb-md-0">
-                            <div class="p-4 bg-light rounded-4 d-inline-block shadow-sm">
-                                <i class="bi bi-box-seam display-1 text-primary"></i>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
-                                    {{ $barang->kode_barang }}
-                                </span>
-                                @if($barang->qr_code)
-                                <span class="badge bg-dark px-3 py-2 rounded-pill shadow-sm ms-1" title="QR / Barcode">
-                                    <i class="bi bi-upc-scan me-1"></i>{{ $barang->qr_code }}
-                                </span>
-                                @endif
-                            </div>
+                            @if($barang->qr_code)
+                                <div class="p-3 bg-white border rounded-4 d-inline-block shadow-sm mb-2">
+                                    <img id="qrCodeImage" 
+                                         src="https://quickchart.io/qr?text={{ urlencode($barang->qr_code) }}&size=200&margin=1" 
+                                         alt="QR Code {{ $barang->qr_code }}" 
+                                         class="img-fluid rounded" 
+                                         style="max-width: 150px; height: auto;" 
+                                         crossorigin="anonymous">
+                                </div>
+                                <div class="mt-1">
+                                    <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
+                                        {{ $barang->kode_barang }}
+                                    </span>
+                                    <span class="badge bg-dark px-3 py-2 rounded-pill shadow-sm ms-1" title="QR Code">
+                                        <i class="bi bi-qr-code me-1"></i>{{ $barang->qr_code }}
+                                    </span>
+                                </div>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 shadow-sm" onclick="downloadQRImage()">
+                                        <i class="bi bi-download me-1"></i> Download QR Code
+                                    </button>
+                                </div>
+                            @else
+                                <div class="p-4 bg-light rounded-4 d-inline-block shadow-sm mb-2">
+                                    <i class="bi bi-qr-code display-1 text-muted opacity-50"></i>
+                                </div>
+                                <div class="mt-1">
+                                    <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm mb-2 d-inline-block">
+                                        {{ $barang->kode_barang }}
+                                    </span>
+                                    <div class="text-danger small mb-2 fw-bold"><i class="bi bi-exclamation-circle me-1"></i> Belum ada QR Code</div>
+                                    <form action="{{ route('barang.generate-qr', $barang) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm">
+                                            <i class="bi bi-qr-code-scan me-1"></i> Generate QR Code
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
                         </div>
                         <div class="col-md-8">
                             <h3 class="fw-bold text-dark mb-1">{{ $barang->nama_barang }}</h3>
@@ -131,7 +157,7 @@
                                                     <tr class="border-bottom">
                                                         <td class="py-2">
                                                             <div class="fw-bold text-dark">
-                                                                {{ $detail->transaksi->created_at->format('d/m/Y') }}
+                                                                {{ $detail->transaksi?->created_at?->format('d/m/Y') ?? '-' }}
                                                             </div>
                                                             <div class="text-muted" style="font-size: 0.75rem;">
                                                                 {{ $detail->transaksi->karyawan->nama ?? 'Umum' }}
@@ -175,7 +201,7 @@
                                                     <tr class="border-bottom">
                                                         <td class="py-2">
                                                             <div class="fw-bold text-dark">
-                                                                {{ $stok->tanggal->format('d/m/Y') }}
+                                                                {{ $stok->tanggal?->format('d/m/Y') ?? '-' }}
                                                             </div>
                                                             <div class="text-muted" style="font-size: 0.75rem;">
                                                                 {{ str($stok->keterangan)->limit(20) ?: 'Tambah Stok' }}
@@ -252,7 +278,7 @@
                                 </div>
                                 <div>
                                     <small class="text-muted d-block">Terdaftar Pada</small>
-                                    <span class="fw-bold">{{ $barang->created_at->format('d M Y, H:i') }}</span>
+                                    <span class="fw-bold">{{ $barang->created_at?->format('d M Y, H:i') ?? '-' }}</span>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center">
@@ -261,7 +287,7 @@
                                 </div>
                                 <div>
                                     <small class="text-muted d-block">Update Terakhir</small>
-                                    <span class="fw-bold">{{ $barang->updated_at->format('d M Y, H:i') }}</span>
+                                    <span class="fw-bold">{{ $barang->updated_at?->format('d M Y, H:i') ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -271,3 +297,60 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        function downloadQRImage() {
+            const qrImg = document.getElementById('qrCodeImage');
+            if (!qrImg) return;
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function() {
+                const padding = 20;
+                const textHeight = 75;
+                canvas.width = img.width + (padding * 2);
+                canvas.height = img.height + textHeight + (padding * 2);
+
+                // Background & border
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = '#2D5A87';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+
+                // Product Name Header
+                ctx.fillStyle = '#1E3A5F';
+                ctx.font = 'bold 15px sans-serif';
+                ctx.textAlign = 'center';
+                const nama = "{{ addslashes($barang->nama_barang) }}";
+                ctx.fillText(nama.length > 22 ? nama.substring(0, 22) + '...' : nama, canvas.width / 2, 28);
+
+                // Draw QR Code
+                ctx.drawImage(img, padding, 38);
+
+                // Footer Code & QR
+                ctx.fillStyle = '#495057';
+                ctx.font = 'bold 13px monospace';
+                ctx.fillText("{{ $barang->kode_barang }} | {{ $barang->qr_code }}", canvas.width / 2, canvas.height - 18);
+
+                // Trigger Download
+                const link = document.createElement('a');
+                link.download = "QR_{{ $barang->kode_barang }}_{{ $barang->qr_code }}.png";
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            };
+            img.onerror = function() {
+                // Fallback download if canvas CORS fails
+                const link = document.createElement('a');
+                link.download = "QR_{{ $barang->kode_barang }}_{{ $barang->qr_code }}.png";
+                link.href = qrImg.src;
+                link.target = "_blank";
+                link.click();
+            };
+            img.src = qrImg.src;
+        }
+    </script>
+@endpush

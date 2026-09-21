@@ -49,14 +49,14 @@
             <table class="table table-hover searchable-table">
                 <thead class="table-dark">
                     <tr>
-                        <th>No</th>
+                        <th data-orderable="false" style="width: 50px;">No</th>
                         <th>Tanggal</th>
                         <th>Barang</th>
                         <th>Harga Beli</th>
                         <th>Jumlah</th>
                         <th>Total</th>
                         <th>Keterangan</th>
-                        <th>Aksi</th>
+                        <th data-orderable="false" style="width: 100px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>

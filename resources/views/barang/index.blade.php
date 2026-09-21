@@ -9,6 +9,9 @@
             <p class="text-muted">Kelola stok dan informasi produk koperasi</p>
         </div>
         <div class="d-flex gap-2">
+            <a href="{{ route('barang.export') }}" class="btn btn-outline-success shadow-sm">
+                <i class="bi bi-file-earmark-arrow-down"></i> Download Excel
+            </a>
             <button type="button" class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
                 <i class="bi bi-file-earmark-excel"></i> Import Excel
             </button>
@@ -27,14 +30,16 @@
                 <table class="table table-hover searchable-table align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>No</th>
+                            <th data-orderable="false" style="width: 50px;">No</th>
                             <th>Nama Barang</th>
                             <th>QR / Barcode</th>
                             <th>Kategori</th>
-                            <th class="text-end">Harga Beli</th>
+                            <th class="text-end">Harga Beli Lama</th>
+                            <th class="text-end">Harga Beli Terbaru</th>
+                            <th class="text-end">Harga Beli Rata Rata</th>
                             <th class="text-end">Harga Jual</th>
                             <th class="text-center">Stok</th>
-                            <th class="text-center">Aksi</th>
+                            <th class="text-center" data-orderable="false" style="width: 100px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +54,9 @@
                                     <code class="bg-light px-2 py-1 rounded">{{ $barang->qr_code ?? '-' }}</code>
                                 </td>
                                 <td>{{ $barang->kategori->nama_kategori ?? '-' }}</td>
-                                <td class="text-end">Rp {{ number_format($barang->harga_beli, 0, ',', '.') }}</td>
+                                <td class="text-end">Rp {{ number_format($barang->harga_beli_lama, 0, ',', '.') }}</td>
+                                <td class="text-end">Rp {{ number_format($barang->harga_beli_terbaru, 0, ',', '.') }}</td>
+                                <td class="text-end">Rp {{ number_format($barang->harga_beli_rata_rata, 0, ',', '.') }}</td>
                                 <td class="text-end">Rp {{ number_format($barang->harga_jual, 0, ',', '.') }}</td>
                                 <td class="text-center">
                                     @if($barang->stok <= $barang->stok_minimal)
@@ -84,7 +91,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">
+                                <td colspan="10" class="text-center py-5 text-muted">
                                     <i class="bi bi-box-seam fs-1 d-block mb-3"></i>
                                     Belum ada data barang. Silakan tambah atau import dari Excel.
                                 </td>

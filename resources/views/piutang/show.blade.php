@@ -132,8 +132,8 @@
                                                             data-price="{{ $p->total_harga }}">
                                                     </td>
                                                     <td>
-                                                        <div class="fw-bold">{{ $p->transaksi->created_at->format('d M Y') }}</div>
-                                                        <small class="text-muted">{{ $p->transaksi->created_at->format('H:i') }}</small>
+                                                        <div class="fw-bold">{{ $p->transaksi?->created_at?->format('d M Y') ?? '-' }}</div>
+                                                        <small class="text-muted">{{ $p->transaksi?->created_at?->format('H:i') ?? '' }}</small>
                                                     </td>
                                                     <td>
                                                         <div class="fw-bold text-primary">{{ $p->barang->nama_barang ?? 'Barang Terhapus' }}</div>
@@ -142,7 +142,7 @@
                                                     <td class="text-end fw-bold">Rp {{ number_format($p->total_harga, 0, ',', '.') }}</td>
                                                     <td class="text-center">
                                                         @php
-                                                            $days = (int) $p->transaksi->created_at->diffInDays(now());
+                                                            $days = $p->transaksi?->created_at ? (int) $p->transaksi->created_at->diffInDays(now()) : 0;
                                                         @endphp
                                                         @if($days == 0)
                                                             <span class="badge bg-info">Hari ini</span>
@@ -203,7 +203,7 @@
                                         @forelse($piutangs_lunas as $pl)
                                             <tr>
                                                 <td>
-                                                    <div class="small fw-bold">{{ $pl->transaksi->created_at->format('d/m/Y') }}</div>
+                                                    <div class="small fw-bold">{{ $pl->transaksi?->created_at?->format('d/m/Y') ?? '-' }}</div>
                                                     <small class="text-muted">{{ $pl->transaksi->kode_transaksi }}</small>
                                                 </td>
                                                 <td>
@@ -212,8 +212,8 @@
                                                 </td>
                                                 <td class="text-end">Rp {{ number_format($pl->total_harga, 0, ',', '.') }}</td>
                                                 <td class="text-center">
-                                                    <div class="small fw-bold">{{ $pl->updated_at->format('d/m/Y') }}</div>
-                                                    <small class="text-muted">{{ $pl->updated_at->format('H:i') }}</small>
+                                                    <div class="small fw-bold">{{ $pl->updated_at?->format('d/m/Y') ?? '-' }}</div>
+                                                    <small class="text-muted">{{ $pl->updated_at?->format('H:i') ?? '' }}</small>
                                                 </td>
                                                 <td class="text-center">
                                                     <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Lunas</span>

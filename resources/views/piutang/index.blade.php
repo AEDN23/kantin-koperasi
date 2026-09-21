@@ -19,12 +19,12 @@
                 <table class="table table-hover searchable-table align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>No</th>
+                            <th data-orderable="false" style="width: 50px;">No</th>
                             <th>Nama Karyawan</th>
                             <th>Departemen</th>
                             <th class="text-center">Status</th>
                             <th class="text-end">Sisa Piutang</th>
-                            <th class="text-center">Aksi</th>
+                            <th class="text-center" data-orderable="false" style="width: 150px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
