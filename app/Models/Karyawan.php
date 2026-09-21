@@ -17,6 +17,7 @@ class Karyawan extends Model
         'nama_karyawan',
         'alamat',
         'departemen_id',
+        'jabatan_id',
         'no_hp',
         'email',
     ];
@@ -25,6 +26,12 @@ class Karyawan extends Model
     public function departemen(): BelongsTo
     {
         return $this->belongsTo(Departemens::class, 'departemen_id');
+    }
+
+    // karyawan memiliki 1 jabatan
+    public function jabatan(): BelongsTo
+    {
+        return $this->belongsTo(Jabatan::class, 'jabatan_id');
     }
 
     // 1 karyawan punya banyak transaksi

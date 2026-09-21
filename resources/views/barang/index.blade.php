@@ -12,6 +12,9 @@
             <a href="{{ route('barang.export') }}" class="btn btn-outline-success shadow-sm">
                 <i class="bi bi-file-earmark-arrow-down"></i> Download Excel
             </a>
+            <a href="{{ route('barang.export-pdf') }}" class="btn btn-outline-danger shadow-sm" target="_blank">
+                <i class="bi bi-file-earmark-pdf"></i> Export PDF
+            </a>
             <button type="button" class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#importModal">
                 <i class="bi bi-file-earmark-excel"></i> Import Excel
             </button>

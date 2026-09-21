@@ -22,6 +22,7 @@
                         <th>NIP</th>
                         <th>Nama Karyawan</th>
                         <th>Departemen</th>
+                        <th>Jabatan</th>
                         <th>No HP</th>
                         <th>Email</th>
                         <th data-orderable="false" style="width: 120px;">Aksi</th>
@@ -34,6 +35,7 @@
                             <td>{{ $karyawan->nip ?? '-' }}</td>
                             <td>{{ $karyawan->nama_karyawan }}</td>
                             <td>{{ $karyawan->departemen->nama_departemen ?? '-' }}</td>
+                            <td>{{ $karyawan->jabatan->nama_jabatan ?? '-' }}</td>
                             <td>{{ $karyawan->no_hp ?? '-' }}</td>
                             <td>{{ $karyawan->email ?? '-' }}</td>
                             <td>
@@ -53,7 +55,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted">Belum ada data karyawan</td>
+                            <td colspan="8" class="text-center text-muted">Belum ada data karyawan</td>
                         </tr>
                     @endforelse
                 </tbody>

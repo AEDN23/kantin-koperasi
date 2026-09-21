@@ -9,12 +9,28 @@ use App\Exports\BarangTemplateExport;
 use App\Exports\BarangExport;
 use App\Imports\BarangImport;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BarangController extends Controller
 {
     public function export()
     {
         return Excel::download(new BarangExport, 'data_barang_' . date('Ymd_His') . '.xlsx');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $barangs = Barang::with(['kategori', 'tambahStoks'])->orderBy('nama_barang')->get();
+        $tanggal = now()->format('d/m/Y H:i');
+
+        $pdf = Pdf::loadView('barang.pdf', compact('barangs', 'tanggal'))
+            ->setPaper('a4', 'landscape');
+
+        if ($request->has('download')) {
+            return $pdf->download('data_barang_' . date('Ymd_His') . '.pdf');
+        }
+
+        return $pdf->stream('data_barang_' . date('Ymd_His') . '.pdf');
     }
 
     public function import(Request $request)

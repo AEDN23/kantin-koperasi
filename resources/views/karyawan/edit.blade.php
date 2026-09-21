@@ -44,7 +44,7 @@
                     @enderror
                 </div>
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="departemen_id" class="form-label">Departemen</label>
                         <select class="form-select @error('departemen_id') is-invalid @enderror" id="departemen_id"
                             name="departemen_id">
@@ -59,7 +59,24 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label for="jabatan_id" class="form-label">Jabatan</label>
+                        <select class="form-select @error('jabatan_id') is-invalid @enderror" id="jabatan_id"
+                            name="jabatan_id">
+                            <option value="">-- Pilih Jabatan --</option>
+                            @foreach($jabatans as $jabatan)
+                                <option value="{{ $jabatan->id }}" {{ old('jabatan_id', $karyawan->jabatan_id) == $jabatan->id ? 'selected' : '' }}>
+                                    {{ $jabatan->nama_jabatan }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('jabatan_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
                         <label for="no_hp" class="form-label">No HP</label>
                         <input type="text" class="form-control @error('no_hp') is-invalid @enderror" id="no_hp" name="no_hp"
                             value="{{ old('no_hp', $karyawan->no_hp) }}">
@@ -67,7 +84,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" id="email"
                             name="email" value="{{ old('email', $karyawan->email) }}">

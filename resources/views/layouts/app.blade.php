@@ -141,6 +141,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('jabatan.*') ? 'active' : '' }}"
+                            href="{{ route('jabatan.index') }}">
+                            <i class="bi bi-briefcase"></i> Jabatan
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('karyawan.*') ? 'active' : '' }}"
                             href="{{ route('karyawan.index') }}">
                             <i class="bi bi-people"></i> Karyawan
@@ -210,6 +216,12 @@
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif

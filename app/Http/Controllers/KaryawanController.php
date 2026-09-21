@@ -4,20 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
 use App\Models\Departemens;
+use App\Models\Jabatan;
 use Illuminate\Http\Request;
 
 class KaryawanController extends Controller
 {
     public function index()
     {
-        $karyawans = Karyawan::with('departemen')->latest()->get();
+        $karyawans = Karyawan::with(['departemen', 'jabatan'])->latest()->get();
         return view('karyawan.index', compact('karyawans'));
     }
 
     public function create()
     {
         $departemens = Departemens::all();
-        return view('karyawan.create', compact('departemens'));
+        $jabatans = Jabatan::orderBy('nama_jabatan')->get();
+        return view('karyawan.create', compact('departemens', 'jabatans'));
     }
 
     public function store(Request $request)
@@ -27,6 +29,7 @@ class KaryawanController extends Controller
             'nama_karyawan' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'departemen_id' => 'nullable|exists:departemens,id',
+            'jabatan_id' => 'nullable|exists:jabatans,id',
             'no_hp' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
         ]);
@@ -42,6 +45,7 @@ class KaryawanController extends Controller
         $sort = $request->get('sort', 'desc');
         $karyawan->load([
             'departemen',
+            'jabatan',
             'transaksis' => function ($q) use ($request, $sort) {
                 if ($request->filled('dari')) {
                     $q->whereDate('created_at', '>=', $request->dari);
@@ -59,7 +63,8 @@ class KaryawanController extends Controller
     public function edit(Karyawan $karyawan)
     {
         $departemens = Departemens::all();
-        return view('karyawan.edit', compact('karyawan', 'departemens'));
+        $jabatans = Jabatan::orderBy('nama_jabatan')->get();
+        return view('karyawan.edit', compact('karyawan', 'departemens', 'jabatans'));
     }
 
     public function update(Request $request, Karyawan $karyawan)
@@ -69,6 +74,7 @@ class KaryawanController extends Controller
             'nama_karyawan' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'departemen_id' => 'nullable|exists:departemens,id',
+            'jabatan_id' => 'nullable|exists:jabatans,id',
             'no_hp' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
         ]);

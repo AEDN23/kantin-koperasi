@@ -26,6 +26,10 @@
                     <td>{{ $karyawan->departemen->nama_departemen ?? '-' }}</td>
                 </tr>
                 <tr>
+                    <th>Jabatan</th>
+                    <td>{{ $karyawan->jabatan->nama_jabatan ?? '-' }}</td>
+                </tr>
+                <tr>
                     <th>Alamat</th>
                     <td>{{ $karyawan->alamat ?? '-' }}</td>
                 </tr>
