@@ -22,7 +22,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 // Master Data (CRUD lengkap)
 Route::resource('departemen', DepartemenController::class)->parameters(['departemen' => 'departemen']);
-Route::get('jabatan/{jabatan}/export-excel', [JabatanController::class, 'exportExcel'])->name('jabatan.export-excel');
+Route::match(['get', 'post'], 'jabatan/{jabatan}/export-excel', [JabatanController::class, 'exportExcel'])->name('jabatan.export-excel');
 Route::resource('jabatan', JabatanController::class);
 Route::resource('karyawan', KaryawanController::class);
 Route::resource('kategori', KategoriController::class);

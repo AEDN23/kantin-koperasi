@@ -98,10 +98,9 @@
                         <a href="{{ route('jabatan.show', $jabatan) }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-clockwise"></i> Reset
                         </a>
-                        <a href="{{ route('jabatan.export-excel', array_merge(['jabatan' => $jabatan->id], request()->only(['dari', 'sampai']))) }}"
-                           class="btn btn-success ms-auto">
+                        <button type="button" onclick="exportExcelFromTable()" class="btn btn-success ms-auto">
                             <i class="bi bi-file-earmark-excel"></i> Export Excel
-                        </a>
+                        </button>
                     </div>
                 </div>
             </form>
@@ -178,7 +177,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" id="tabelRiwayat">
+                <table class="table table-hover align-middle mb-0 datatable" id="tabelRiwayat">
                     <thead class="table-secondary">
                         <tr>
                             <th class="ps-3">No</th>
@@ -193,7 +192,7 @@
                     </thead>
                     <tbody>
                         @forelse($transaksis as $index => $trx)
-                            <tr>
+                            <tr data-id="{{ $trx->id }}">
                                 <td class="ps-3">{{ $index + 1 }}</td>
                                 <td>
                                     <div class="fw-semibold">{{ $trx->created_at->format('d/m/Y') }}</div>
@@ -258,3 +257,109 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+var dtRiwayat;
+
+$(document).ready(function () {
+    if (!$.fn.DataTable.isDataTable('#tabelRiwayat')) {
+        dtRiwayat = $('#tabelRiwayat').DataTable({
+            language: {
+                search: "Cari:",
+                searchPlaceholder: "🔍 Cari karyawan, kode, tanggal...",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ transaksi",
+                infoEmpty: "Tidak ada data",
+                infoFiltered: "(disaring dari _MAX_ total)",
+                zeroRecords: "Tidak ada transaksi yang cocok",
+                paginate: { first: "«", last: "»", next: "›", previous: "‹" }
+            },
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'Semua']],
+            pageLength: 25,
+            order: [[1, 'desc']],
+            responsive: true,
+            autoWidth: false,
+            columnDefs: [
+                { targets: 0, orderable: false },
+                { targets: 1, type: 'date' },
+                { targets: 2, orderable: true },
+                { targets: 3, orderable: true },
+                { targets: 4, orderable: false },
+                { targets: 5, orderable: true },
+                { targets: 6, orderable: true },
+                { targets: 7, orderable: false },
+            ]
+        });
+    } else {
+        dtRiwayat = $('#tabelRiwayat').DataTable();
+    }
+});
+
+function exportExcelFromTable() {
+    var dt = dtRiwayat;
+    var ids = [];
+
+    if (dt) {
+        // Ambil ID semua transaksi yang lolos filter & sesuai urutan sorting DataTables saat ini
+        dt.rows({ search: 'applied', order: 'applied' }).every(function () {
+            var id = $(this.node()).data('id');
+            if (id) ids.push(id);
+        });
+    }
+
+    if (ids.length === 0) {
+        alert('Tidak ada data transaksi untuk diexport.');
+        return;
+    }
+
+    // Submit ke backend via form POST agar format per-item rapi dan konsisten
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ route("jabatan.export-excel", $jabatan) }}';
+    form.style.display = 'none';
+
+    var csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_token';
+    csrfInput.value = '{{ csrf_token() }}';
+    form.appendChild(csrfInput);
+
+    var idsInput = document.createElement('input');
+    idsInput.type = 'hidden';
+    idsInput.name = 'ids';
+    idsInput.value = ids.join(',');
+    form.appendChild(idsInput);
+
+    var searchVal = dt ? dt.search() : '';
+    if (searchVal) {
+        var sInput = document.createElement('input');
+        sInput.type = 'hidden';
+        sInput.name = 'filter_search';
+        sInput.value = searchVal;
+        form.appendChild(sInput);
+    }
+
+    var dariVal = '{{ request("dari") }}';
+    var sampaiVal = '{{ request("sampai") }}';
+    if (dariVal) {
+        var dInput = document.createElement('input');
+        dInput.type = 'hidden';
+        dInput.name = 'dari';
+        dInput.value = dariVal;
+        form.appendChild(dInput);
+    }
+    if (sampaiVal) {
+        var smInput = document.createElement('input');
+        smInput.type = 'hidden';
+        smInput.name = 'sampai';
+        smInput.value = sampaiVal;
+        form.appendChild(smInput);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+}
+</script>
+@endpush
