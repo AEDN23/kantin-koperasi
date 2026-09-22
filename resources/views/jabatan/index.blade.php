@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Data Jabatan')
+@section('title', 'Data Line')
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Data Jabatan</h2>
+        <h2>Data Line</h2>
         <a href="{{ route('jabatan.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Tambah Jabatan
+            <i class="bi bi-plus-circle"></i> Tambah Line
         </a>
     </div>
 
@@ -19,7 +19,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th data-orderable="false" style="width: 50px;">No</th>
-                        <th>Nama Jabatan</th>
+                        <th>Nama Line</th>
                         <th>Deskripsi</th>
                         <th>Jumlah Karyawan</th>
                         <th data-orderable="false" style="width: 120px;">Aksi</th>

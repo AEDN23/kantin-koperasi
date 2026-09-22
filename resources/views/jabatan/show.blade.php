@@ -5,10 +5,10 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-0">Detail Jabatan</h2>
+            <h2 class="mb-0">Detail Line</h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('jabatan.index') }}">Jabatan</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('jabatan.index') }}">Line</a></li>
                     <li class="breadcrumb-item active">{{ $jabatan->nama_jabatan }}</li>
                 </ol>
             </nav>
@@ -21,14 +21,14 @@
     {{-- Info Jabatan --}}
     <div class="card mb-4 border-0 shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="bi bi-briefcase-fill me-2"></i>Info Jabatan</h5>
+            <h5 class="mb-0"><i class="bi bi-briefcase-fill me-2"></i>Info Line</h5>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                     <table class="table table-borderless mb-0">
                         <tr>
-                            <th width="180" class="text-muted fw-semibold">Nama Jabatan</th>
+                            <th width="180" class="text-muted fw-semibold">Nama Line</th>
                             <td><strong>{{ $jabatan->nama_jabatan }}</strong></td>
                         </tr>
                         <tr>
@@ -162,7 +162,7 @@
     {{-- Riwayat Transaksi --}}
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Riwayat Transaksi Jabatan</h5>
+            <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Riwayat Transaksi Line</h5>
             <div class="d-flex align-items-center gap-2">
                 @if(request('dari') || request('sampai'))
                     <span class="badge bg-warning text-dark">

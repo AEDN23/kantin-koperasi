@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Jabatan')
+@section('title', 'Edit Line')
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Edit Jabatan</h2>
+        <h2>Edit Line</h2>
         <a href="{{ route('jabatan.index') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Kembali
         </a>
@@ -16,7 +16,7 @@
                 @csrf
                 @method('PUT')
                 <div class="mb-3">
-                    <label for="nama_jabatan" class="form-label">Nama Jabatan <span
+                    <label for="nama_jabatan" class="form-label">Nama Line <span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control @error('nama_jabatan') is-invalid @enderror"
                         id="nama_jabatan" name="nama_jabatan"

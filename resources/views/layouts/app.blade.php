@@ -143,7 +143,7 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('jabatan.*') ? 'active' : '' }}"
                             href="{{ route('jabatan.index') }}">
-                            <i class="bi bi-briefcase"></i> Jabatan
+                            <i class="bi bi-briefcase"></i> Line
                         </a>
                     </li>
                     <li class="nav-item">

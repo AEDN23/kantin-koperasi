@@ -6,12 +6,44 @@ use App\Models\Karyawan;
 use App\Models\Departemens;
 use App\Models\Jabatan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KaryawanController extends Controller
 {
     public function index()
     {
         $karyawans = Karyawan::with(['departemen', 'jabatan'])->latest()->get();
+
+        // Agregasi total transaksi belanja dan frekuensi transaksi per karyawan
+        $transaksiSummary = DB::table('transaksis')
+            ->leftJoin('transaksi_details', 'transaksis.id', '=', 'transaksi_details.transaksi_id')
+            ->select('transaksis.karyawan_id')
+            ->selectRaw('COUNT(DISTINCT transaksis.id) as total_count')
+            ->selectRaw('COALESCE(SUM(transaksi_details.total_harga), 0) as total_belanja')
+            ->groupBy('transaksis.karyawan_id')
+            ->get()
+            ->keyBy('karyawan_id');
+
+        // Agregasi total piutang yang belum lunas per karyawan
+        $piutangSummary = DB::table('transaksis')
+            ->join('transaksi_details', 'transaksis.id', '=', 'transaksi_details.transaksi_id')
+            ->where('transaksi_details.metode_pembayaran', 'piutang')
+            ->where('transaksi_details.status_pembayaran', 'belum_lunas')
+            ->select('transaksis.karyawan_id')
+            ->selectRaw('COALESCE(SUM(transaksi_details.total_harga), 0) as total_piutang')
+            ->groupBy('transaksis.karyawan_id')
+            ->get()
+            ->keyBy('karyawan_id');
+
+        $karyawans->each(function ($karyawan) use ($transaksiSummary, $piutangSummary) {
+            $trx = $transaksiSummary->get($karyawan->id);
+            $piutang = $piutangSummary->get($karyawan->id);
+
+            $karyawan->transaksi_count = $trx ? $trx->total_count : 0;
+            $karyawan->total_transaksi = $trx ? (int) $trx->total_belanja : 0;
+            $karyawan->total_piutang   = $piutang ? (int) $piutang->total_piutang : 0;
+        });
+
         return view('karyawan.index', compact('karyawans'));
     }
 

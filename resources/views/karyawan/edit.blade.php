@@ -60,10 +60,10 @@
                         @enderror
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="jabatan_id" class="form-label">Jabatan</label>
+                        <label for="jabatan_id" class="form-label">Line</label>
                         <select class="form-select @error('jabatan_id') is-invalid @enderror" id="jabatan_id"
                             name="jabatan_id">
-                            <option value="">-- Pilih Jabatan --</option>
+                            <option value="">-- Pilih Line --</option>
                             @foreach($jabatans as $jabatan)
                                 <option value="{{ $jabatan->id }}" {{ old('jabatan_id', $karyawan->jabatan_id) == $jabatan->id ? 'selected' : '' }}>
                                     {{ $jabatan->nama_jabatan }}

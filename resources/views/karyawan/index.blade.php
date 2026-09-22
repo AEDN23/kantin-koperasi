@@ -22,9 +22,9 @@
                         <th>NIP</th>
                         <th>Nama Karyawan</th>
                         <th>Departemen</th>
-                        <th>Jabatan</th>
-                        <th>No HP</th>
-                        <th>Email</th>
+                        <th>Line</th>
+                        <th class="text-end">Total Transaksi</th>
+                        <th class="text-end">Total Piutang</th>
                         <th data-orderable="false" style="width: 120px;">Aksi</th>
                     </tr>
                 </thead>
@@ -36,8 +36,21 @@
                             <td>{{ $karyawan->nama_karyawan }}</td>
                             <td>{{ $karyawan->departemen->nama_departemen ?? '-' }}</td>
                             <td>{{ $karyawan->jabatan->nama_jabatan ?? '-' }}</td>
-                            <td>{{ $karyawan->no_hp ?? '-' }}</td>
-                            <td>{{ $karyawan->email ?? '-' }}</td>
+                            <td class="text-end">
+                                @if(($karyawan->transaksi_count ?? 0) > 0)
+                                    <div class="fw-bold text-dark">Rp {{ number_format($karyawan->total_transaksi, 0, ',', '.') }}</div>
+                                    <small class="text-muted">{{ $karyawan->transaksi_count }} transaksi</small>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="text-end">
+                                @if(($karyawan->total_piutang ?? 0) > 0)
+                                    <span class="badge bg-danger">Rp {{ number_format($karyawan->total_piutang, 0, ',', '.') }}</span>
+                                @else
+                                    <span class="badge bg-success"><i class="bi bi-check-lg"></i> Rp 0 (Lunas)</span>
+                                @endif
+                            </td>
                             <td>
                                 <a href="{{ route('karyawan.show', $karyawan) }}" class="btn btn-sm btn-info text-white">
                                     <i class="bi bi-eye"></i>

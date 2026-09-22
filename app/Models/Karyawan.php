@@ -39,4 +39,23 @@ class Karyawan extends Model
     {
         return $this->hasMany(Transaksi::class);
     }
+
+    public function getTotalTransaksiAttribute(): int
+    {
+        if (array_key_exists('total_transaksi', $this->attributes)) {
+            return (int) $this->attributes['total_transaksi'];
+        }
+        return (int) TransaksiDetail::whereHas('transaksi', fn($q) => $q->where('karyawan_id', $this->id))->sum('total_harga');
+    }
+
+    public function getTotalPiutangAttribute(): int
+    {
+        if (array_key_exists('total_piutang', $this->attributes)) {
+            return (int) $this->attributes['total_piutang'];
+        }
+        return (int) TransaksiDetail::whereHas('transaksi', fn($q) => $q->where('karyawan_id', $this->id))
+            ->where('metode_pembayaran', 'piutang')
+            ->where('status_pembayaran', 'belum_lunas')
+            ->sum('total_harga');
+    }
 }
