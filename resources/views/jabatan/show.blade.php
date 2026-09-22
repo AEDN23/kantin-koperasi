@@ -124,6 +124,7 @@
                                 <th class="ps-3">No</th>
                                 <th>Nama Karyawan</th>
                                 <th>Departemen</th>
+                                <th>Total transaksi / piutang</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -143,6 +144,11 @@
                                     <td>
                                         <span class="badge bg-light text-dark border">
                                             {{ $kar->departemen->nama_departemen ?? '-' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            {{ $kar->transaksis->count() ?? '-' }} / Rp {{ number_format($kar->transaksis->sum(fn($t) => $t->total_belanja), 0, ',', '.') }}
                                         </span>
                                     </td>
                                     <td>
