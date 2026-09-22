@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Riwayat Transaksi')
+@section('title', Auth::user()->isKaryawan() ? 'Riwayat Transaksi Saya' : 'Riwayat Transaksi')
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Riwayat Transaksi</h2>
+        <h2>{{ Auth::user()->isKaryawan() ? 'Riwayat Transaksi Saya' : 'Riwayat Transaksi' }}</h2>
         <a href="{{ route('transaksi.index') }}" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Transaksi Baru
         </a>
@@ -80,15 +80,17 @@
                             </td>
                             <td>{{ $transaksi->created_at?->format('d/m/Y H:i') ?? '-' }}</td>
                             <td>
-                                <a href="{{ route('transaksi.show', $transaksi) }}" class="btn btn-sm btn-info text-white">
+                                <a href="{{ route('transaksi.show', $transaksi) }}" class="btn btn-sm btn-info text-white" title="Lihat Detail">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <form action="{{ route('transaksi.destroy', $transaksi) }}" method="POST" class="d-inline"
-                                    onsubmit="return confirm('Yakin hapus transaksi ini? Stok barang akan dikembalikan.')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
-                                </form>
+                                @if(Auth::user()->isAdmin())
+                                    <form action="{{ route('transaksi.destroy', $transaksi) }}" method="POST" class="d-inline"
+                                        onsubmit="return confirm('Yakin hapus transaksi ini? Stok barang akan dikembalikan.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger" title="Hapus Transaksi"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty

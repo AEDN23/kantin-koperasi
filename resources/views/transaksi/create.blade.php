@@ -5,9 +5,15 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Transaksi Baru</h2>
-        <a href="{{ route('transaksi.riwayat') }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Riwayat Transaksi
-        </a>
+        @auth
+            <a href="{{ route('transaksi.riwayat') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> {{ Auth::user()->isKaryawan() ? 'Riwayat Transaksi Saya' : 'Riwayat Transaksi' }}
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="btn btn-outline-primary">
+                <i class="bi bi-box-arrow-in-right"></i> Login Petugas / Karyawan
+            </a>
+        @endauth
     </div>
 
     <div class="card">

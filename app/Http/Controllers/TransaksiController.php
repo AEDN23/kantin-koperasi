@@ -60,7 +60,13 @@ class TransaksiController extends Controller
 
     public function riwayat(Request $request)
     {
+        $user = auth()->user();
         $query = Transaksi::with('karyawan', 'transaksiDetails.barang');
+
+        // Jika login sebagai karyawan, hanya tampilkan riwayat miliknya sendiri
+        if ($user && $user->isKaryawan()) {
+            $query->where('karyawan_id', $user->karyawan_id);
+        }
 
         // Filter tanggal
         if ($request->filled('dari')) {
@@ -80,7 +86,13 @@ class TransaksiController extends Controller
 
     public function export(Request $request)
     {
+        $user = auth()->user();
         $query = Transaksi::with('karyawan', 'transaksiDetails.barang');
+
+        // Jika login sebagai karyawan, batasi hanya riwayat miliknya sendiri
+        if ($user && $user->isKaryawan()) {
+            $query->where('karyawan_id', $user->karyawan_id);
+        }
 
         // Filter tanggal
         if ($request->filled('dari')) {
@@ -185,12 +197,22 @@ class TransaksiController extends Controller
 
     public function show(Transaksi $transaksi)
     {
+        $user = auth()->user();
+        if ($user && $user->isKaryawan() && $transaksi->karyawan_id !== $user->karyawan_id) {
+            abort(403, 'Akses tidak diizinkan. Anda hanya dapat melihat detail transaksi milik Anda sendiri.');
+        }
+
         $transaksi->load('karyawan', 'transaksiDetails.barang');
         return view('transaksi.show', compact('transaksi'));
     }
 
     public function destroy(Transaksi $transaksi)
     {
+        $user = auth()->user();
+        if (!$user || !$user->isAdmin()) {
+            abort(403, 'Hanya Administrator yang dapat menghapus data transaksi.');
+        }
+
         DB::transaction(function () use ($transaksi) {
             // Kembalikan stok
             foreach ($transaksi->transaksiDetails as $detail) {

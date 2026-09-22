@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Laporan Bulanan')
+@section('title', $isKaryawan ? 'Laporan Transaksi Saya' : 'Laporan Bulanan')
 
 @section('content')
-    <h2 class="mb-4">Laporan Bulanan</h2>
+    <h2 class="mb-4">{{ $isKaryawan ? 'Laporan Transaksi Saya' : 'Laporan Bulanan' }}</h2>
 
     <!-- Filter -->
     <div class="card mb-4">
         <div class="card-body">
             <form action="{{ route('laporan.index') }}" method="GET" class="row g-3 align-items-end">
-                <div class="col-md-3">
+                <div class="{{ $isKaryawan ? 'col-md-4' : 'col-md-3' }}">
                     <label for="bulan" class="form-label">Bulan</label>
                     <select class="form-select" id="bulan" name="bulan">
                         @for($i = 1; $i <= 12; $i++)
@@ -19,7 +19,7 @@
                         @endfor
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="{{ $isKaryawan ? 'col-md-4' : 'col-md-3' }}">
                     <label for="tahun" class="form-label">Tahun</label>
                     <select class="form-select" id="tahun" name="tahun">
                         @for($y = now()->year; $y >= now()->year - 5; $y--)
@@ -27,18 +27,20 @@
                         @endfor
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="departemen_id" class="form-label">Departemen</label>
-                    <select class="form-select" id="departemen_id" name="departemen_id">
-                        <option value="">-- Semua Departemen --</option>
-                        @foreach($departemens as $dept)
-                            <option value="{{ $dept->id }}" {{ $departemen_id == $dept->id ? 'selected' : '' }}>
-                                {{ $dept->nama_departemen }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3">
+                @if(!$isKaryawan)
+                    <div class="col-md-3">
+                        <label for="departemen_id" class="form-label">Departemen</label>
+                        <select class="form-select" id="departemen_id" name="departemen_id">
+                            <option value="">-- Semua Departemen --</option>
+                            @foreach($departemens as $dept)
+                                <option value="{{ $dept->id }}" {{ $departemen_id == $dept->id ? 'selected' : '' }}>
+                                    {{ $dept->nama_departemen }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+                <div class="{{ $isKaryawan ? 'col-md-4' : 'col-md-3' }}">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-filter"></i> Filter
                     </button>
@@ -65,7 +67,9 @@
                         <th>Jml Trx</th>
                         <th>Total Piutang</th>
                         <th>Total Belanja</th>
-                        <th>Est. Profit</th>
+                        @if(!$isKaryawan)
+                            <th>Est. Profit</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -73,19 +77,25 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>
-                                <a href="{{ route('karyawan.show', $karyawan) }}">
-                                    {{ $karyawan->nama_karyawan }}
-                                </a>
+                                @if(!$isKaryawan)
+                                    <a href="{{ route('karyawan.show', $karyawan) }}" class="fw-bold text-decoration-none">
+                                        {{ $karyawan->nama_karyawan }}
+                                    </a>
+                                @else
+                                    <span class="fw-bold">{{ $karyawan->nama_karyawan }}</span>
+                                @endif
                             </td>
                             <td>{{ $karyawan->departemen->nama_departemen ?? '-' }}</td>
                             <td>{{ $karyawan->jumlah_transaksi }}x</td>
-                            <td class="text-danger">Rp {{ number_format($karyawan->total_piutang, 0, ',', '.') }}</td>
-                            <td>Rp {{ number_format($karyawan->total_belanja, 0, ',', '.') }}</td>
-                            <td class="text-success">Rp {{ number_format($karyawan->total_profit, 0, ',', '.') }}</td>
+                            <td class="text-danger fw-bold">Rp {{ number_format($karyawan->total_piutang, 0, ',', '.') }}</td>
+                            <td class="fw-bold">Rp {{ number_format($karyawan->total_belanja, 0, ',', '.') }}</td>
+                            @if(!$isKaryawan)
+                                <td class="text-success">Rp {{ number_format($karyawan->total_profit, 0, ',', '.') }}</td>
+                            @endif
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted">Tidak ada transaksi di bulan ini</td>
+                            <td colspan="{{ $isKaryawan ? '6' : '7' }}" class="text-center text-muted py-4">Tidak ada transaksi di bulan ini</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -95,7 +105,9 @@
                             <td colspan="4" class="text-end">Grand Total:</td>
                             <td class="text-danger">Rp {{ number_format($laporans->sum('total_piutang'), 0, ',', '.') }}</td>
                             <td>Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
-                            <td class="text-success">Rp {{ number_format($laporans->sum('total_profit'), 0, ',', '.') }}</td>
+                            @if(!$isKaryawan)
+                                <td class="text-success">Rp {{ number_format($laporans->sum('total_profit'), 0, ',', '.') }}</td>
+                            @endif
                         </tr>
                     </tfoot>
                 @endif

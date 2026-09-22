@@ -34,6 +34,12 @@ class Karyawan extends Model
         return $this->belongsTo(Jabatan::class, 'jabatan_id');
     }
 
+    // relasi akun user karyawan
+    public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(User::class, 'karyawan_id');
+    }
+
     // 1 karyawan punya banyak transaksi
     public function transaksis(): HasMany
     {

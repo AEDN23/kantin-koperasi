@@ -64,12 +64,38 @@ class KaryawanController extends Controller
             'jabatan_id' => 'nullable|exists:jabatans,id',
             'no_hp' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
+            'role' => 'nullable|in:admin,karyawan',
+            'password' => 'nullable|string|min:4',
         ]);
 
-        Karyawan::create($request->all());
+        $karyawan = Karyawan::create($request->all());
+
+        // Otomatis buatkan akun user untuk karyawan baru
+        $username = trim($karyawan->nama_karyawan);
+        if (\App\Models\User::where('username', $username)->exists() && $karyawan->nip) {
+            $username = $username . ' (' . $karyawan->nip . ')';
+        }
+        $slug = \Illuminate\Support\Str::slug($karyawan->nama_karyawan, '_');
+        $email = $karyawan->email ?: (($slug ?: 'karyawan') . '_' . $karyawan->id . '@koperasi.local');
+
+        $initialPassword = $request->filled('password') 
+            ? $request->password 
+            : ($karyawan->nip ?: '123456');
+
+        $userRole = $request->input('role', 'karyawan') ?: 'karyawan';
+
+        \App\Models\User::create([
+            'name' => $karyawan->nama_karyawan,
+            'username' => $username,
+            'email' => $email,
+            'password' => \Illuminate\Support\Facades\Hash::make($initialPassword),
+            'role' => $userRole,
+            'karyawan_id' => $karyawan->id,
+            'jabatan_id' => $karyawan->jabatan_id,
+        ]);
 
         return redirect()->route('karyawan.index')
-            ->with('success', 'Karyawan berhasil ditambahkan!');
+            ->with('success', 'Karyawan berhasil ditambahkan dan akun login telah dibuat!');
     }
 
     public function show(Request $request, Karyawan $karyawan)
@@ -94,6 +120,7 @@ class KaryawanController extends Controller
 
     public function edit(Karyawan $karyawan)
     {
+        $karyawan->load('user');
         $departemens = Departemens::all();
         $jabatans = Jabatan::orderBy('nama_jabatan')->get();
         return view('karyawan.edit', compact('karyawan', 'departemens', 'jabatans'));
@@ -109,16 +136,57 @@ class KaryawanController extends Controller
             'jabatan_id' => 'nullable|exists:jabatans,id',
             'no_hp' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
+            'role' => 'nullable|in:admin,karyawan',
+            'password' => 'nullable|string|min:4',
         ]);
 
         $karyawan->update($request->all());
 
+        // Update akun user terkait jika ada, atau buat baru jika belum ada
+        if ($karyawan->user) {
+            $updateUser = [
+                'name' => $karyawan->nama_karyawan,
+                'jabatan_id' => $karyawan->jabatan_id,
+            ];
+            if ($karyawan->email) {
+                $updateUser['email'] = $karyawan->email;
+            }
+            if ($request->filled('role')) {
+                $updateUser['role'] = $request->role;
+            }
+            if ($request->filled('password')) {
+                $updateUser['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+            }
+            $karyawan->user->update($updateUser);
+        } else {
+            $username = trim($karyawan->nama_karyawan);
+            if (\App\Models\User::where('username', $username)->exists() && $karyawan->nip) {
+                $username = $username . ' (' . $karyawan->nip . ')';
+            }
+            $slug = \Illuminate\Support\Str::slug($karyawan->nama_karyawan, '_');
+            $email = $karyawan->email ?: (($slug ?: 'karyawan') . '_' . $karyawan->id . '@koperasi.local');
+            $pwd = $request->filled('password') ? $request->password : ($karyawan->nip ?: '123456');
+
+            \App\Models\User::create([
+                'name' => $karyawan->nama_karyawan,
+                'username' => $username,
+                'email' => $email,
+                'password' => \Illuminate\Support\Facades\Hash::make($pwd),
+                'role' => $request->input('role', 'karyawan') ?: 'karyawan',
+                'karyawan_id' => $karyawan->id,
+                'jabatan_id' => $karyawan->jabatan_id,
+            ]);
+        }
+
         return redirect()->route('karyawan.index')
-            ->with('success', 'Karyawan berhasil diupdate!');
+            ->with('success', 'Data karyawan dan akun login berhasil diupdate!');
     }
 
     public function destroy(Karyawan $karyawan)
     {
+        if ($karyawan->user) {
+            $karyawan->user->delete();
+        }
         $karyawan->delete();
 
         return redirect()->route('karyawan.index')

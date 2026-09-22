@@ -32,7 +32,12 @@ class LaporanController extends Controller
                     ->whereYear('created_at', $tahun);
             });
 
-        if ($request->filled('departemen_id')) {
+        $user = auth()->user();
+        $isKaryawan = $user && $user->isKaryawan();
+
+        if ($isKaryawan) {
+            $query->where('id', $user->karyawan_id);
+        } elseif ($request->filled('departemen_id')) {
             $query->where('departemen_id', $request->departemen_id);
         }
 
@@ -58,6 +63,6 @@ class LaporanController extends Controller
 
         $grandTotal = $laporans->sum('total_belanja');
 
-        return view('laporan.index', compact('laporans', 'bulan', 'tahun', 'grandTotal', 'departemens', 'departemen_id'));
+        return view('laporan.index', compact('laporans', 'bulan', 'tahun', 'grandTotal', 'departemens', 'departemen_id', 'isKaryawan'));
     }
 }

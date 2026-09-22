@@ -117,99 +117,207 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar p-0">
-                <div class="d-flex justify-content-between align-items-center px-3 py-4">
-                    <h5 class="text-white fw-bold mb-0">🏪 Warung Koperasi</h5>
-                    <button class="btn btn-link text-white d-md-none p-0" id="closeSidebar">
-                        <i class="bi bi-x-lg fs-4"></i>
-                    </button>
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar p-0 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center px-3 py-3 border-bottom border-secondary border-opacity-25">
+                        <div class="d-flex align-items-center">
+                            <span class="fs-4 me-2">🏪</span>
+                            <div>
+                                <h6 class="text-white fw-bold mb-0">Warung Koperasi</h6>
+                                <small class="text-white-50" style="font-size: 0.75rem;">Sistem Manajemen</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-link text-white d-md-none p-0" id="closeSidebar">
+                            <i class="bi bi-x-lg fs-4"></i>
+                        </button>
+                    </div>
+
+                    {{-- User Profile Card di Sidebar --}}
+                    <div class="px-3 py-3 mx-2 my-2 rounded-3 bg-white bg-opacity-10 text-white">
+                        @auth
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-white text-dark d-flex align-items-center justify-content-center fw-bold me-2" style="width: 38px; height: 38px; font-size: 1rem;">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                                <div class="overflow-hidden flex-grow-1">
+                                    <div class="fw-bold text-truncate" title="{{ Auth::user()->name }}" style="font-size: 0.9rem;">
+                                        {{ Auth::user()->name }}
+                                    </div>
+                                    <div class="mt-1">
+                                        @if(Auth::user()->isAdmin())
+                                            <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 0.7rem;">
+                                                <i class="bi bi-shield-lock-fill"></i> ADMIN
+                                            </span>
+                                        @else
+                                            <span class="badge bg-info text-dark px-2 py-1" style="font-size: 0.7rem;">
+                                                <i class="bi bi-person-fill"></i> KARYAWAN
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <small class="text-white-50 d-block" style="font-size: 0.75rem;">STATUS</small>
+                                    <span class="badge bg-secondary px-2 py-1" style="font-size: 0.75rem;">
+                                        <i class="bi bi-shop"></i> Mode Kasir (Tamu)
+                                    </span>
+                                </div>
+                                <a href="{{ route('login') }}" class="btn btn-sm btn-light fw-bold py-1 px-2" style="font-size: 0.8rem;">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                                </a>
+                            </div>
+                        @endauth
+                    </div>
+
+                    <ul class="nav flex-column mb-auto">
+                        @auth
+                            {{-- Menu Khusus Admin --}}
+                            @if(Auth::user()->isAdmin())
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                                        href="{{ route('dashboard') }}">
+                                        <i class="bi bi-speedometer2"></i> Dashboard
+                                    </a>
+                                </li>
+
+                                <li class="nav-item mt-2">
+                                    <small class="text-white-50 px-3 fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.5px;">MASTER DATA</small>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('departemen.*') ? 'active' : '' }}"
+                                        href="{{ route('departemen.index') }}">
+                                        <i class="bi bi-building"></i> Departemen
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('jabatan.*') ? 'active' : '' }}"
+                                        href="{{ route('jabatan.index') }}">
+                                        <i class="bi bi-briefcase"></i> Line
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('karyawan.*') ? 'active' : '' }}"
+                                        href="{{ route('karyawan.index') }}">
+                                        <i class="bi bi-people"></i> Karyawan
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('kategori.*') ? 'active' : '' }}"
+                                        href="{{ route('kategori.index') }}">
+                                        <i class="bi bi-tags"></i> Kategori
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('barang.*') ? 'active' : '' }}"
+                                        href="{{ route('barang.index') }}">
+                                        <i class="bi bi-box"></i> Barang
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('tambah-stok.*') ? 'active' : '' }}"
+                                        href="{{ route('tambah-stok.index') }}">
+                                        <i class="bi bi-plus-circle"></i> Tambah Stok
+                                    </a>
+                                </li>
+                            @endif
+                        @endauth
+
+                        {{-- Menu Transaksi --}}
+                        <li class="nav-item mt-2">
+                            <small class="text-white-50 px-3 fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.5px;">TRANSAKSI</small>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('transaksi.index') || request()->routeIs('transaksi.create') ? 'active' : '' }}"
+                                href="{{ route('transaksi.index') }}">
+                                <i class="bi bi-cart-plus"></i> Transaksi Baru
+                            </a>
+                        </li>
+
+                        @auth
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('transaksi.riwayat') || request()->routeIs('transaksi.show') ? 'active' : '' }}"
+                                    href="{{ route('transaksi.riwayat') }}">
+                                    <i class="bi bi-clock-history"></i> {{ Auth::user()->isKaryawan() ? 'Riwayat Transaksi Saya' : 'Riwayat Transaksi' }}
+                                </a>
+                            </li>
+
+                            @if(Auth::user()->isAdmin())
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('piutang.*') ? 'active' : '' }}"
+                                        href="{{ route('piutang.index') }}">
+                                        <i class="bi bi-wallet2"></i> Pelunasan Piutang
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Menu Laporan --}}
+                            <li class="nav-item mt-2">
+                                <small class="text-white-50 px-3 fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.5px;">LAPORAN</small>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}"
+                                    href="{{ route('laporan.index') }}">
+                                    <i class="bi bi-file-earmark-bar-graph"></i> {{ Auth::user()->isKaryawan() ? 'Laporan Saya' : 'Laporan Bulanan' }}
+                                </a>
+                            </li>
+                        @endauth
+                    </ul>
                 </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
-                            href="{{ route('dashboard') }}">
-                            <i class="bi bi-speedometer2"></i> Dashboard
+
+                {{-- Bagian Bawah Sidebar (Auth Actions) --}}
+                <div class="p-3 border-top border-secondary border-opacity-25 mt-3">
+                    @auth
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-light w-100 btn-sm text-start d-flex align-items-center justify-content-between py-2 px-3">
+                                <span><i class="bi bi-box-arrow-right me-2 text-danger"></i> Keluar (Logout)</span>
+                                <i class="bi bi-chevron-right small text-white-50"></i>
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-primary w-100 btn-sm text-white py-2 shadow-sm d-flex align-items-center justify-content-center">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Login Akun
                         </a>
-                    </li>
-                    <li class="nav-item mt-3">
-                        <small class="text-white-50 px-3">MASTER DATA</small>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('departemen.*') ? 'active' : '' }}"
-                            href="{{ route('departemen.index') }}">
-                            <i class="bi bi-building"></i> Departemen
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('jabatan.*') ? 'active' : '' }}"
-                            href="{{ route('jabatan.index') }}">
-                            <i class="bi bi-briefcase"></i> Line
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('karyawan.*') ? 'active' : '' }}"
-                            href="{{ route('karyawan.index') }}">
-                            <i class="bi bi-people"></i> Karyawan
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('kategori.*') ? 'active' : '' }}"
-                            href="{{ route('kategori.index') }}">
-                            <i class="bi bi-tags"></i> Kategori
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('barang.*') ? 'active' : '' }}"
-                            href="{{ route('barang.index') }}">
-                            <i class="bi bi-box"></i> Barang
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('tambah-stok.*') ? 'active' : '' }}"
-                            href="{{ route('tambah-stok.index') }}">
-                            <i class="bi bi-plus-circle"></i> Tambah Stok
-                        </a>
-                    </li>
-                    <li class="nav-item mt-3">
-                        <small class="text-white-50 px-3">TRANSAKSI</small>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('transaksi.index') || request()->routeIs('transaksi.create') ? 'active' : '' }}"
-                            href="{{ route('transaksi.index') }}">
-                            <i class="bi bi-cart-plus"></i> Transaksi Baru
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('transaksi.riwayat') || request()->routeIs('transaksi.show') ? 'active' : '' }}"
-                            href="{{ route('transaksi.riwayat') }}">
-                            <i class="bi bi-clock-history"></i> Riwayat Transaksi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('piutang.*') ? 'active' : '' }}"
-                            href="{{ route('piutang.index') }}">
-                            <i class="bi bi-wallet2"></i> Pelunasan Piutang
-                        </a>
-                    </li>
-                    <li class="nav-item mt-3">
-                        <small class="text-white-50 px-3">LAPORAN</small>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}"
-                            href="{{ route('laporan.index') }}">
-                            <i class="bi bi-file-earmark-bar-graph"></i> Laporan
-                        </a>
-                    </li>
-                </ul>
+                    @endauth
+                </div>
             </nav>
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 main-content p-4">
-                <div class="d-flex align-items-center mb-4">
-                    <button id="toggleSidebar" class="btn btn-light shadow-sm me-3 border">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <h4 class="mb-0 fw-bold text-dark">@yield('title', 'Warung Koperasi')</h4>
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div class="d-flex align-items-center">
+                        <button id="toggleSidebar" class="btn btn-light shadow-sm me-3 border">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <h4 class="mb-0 fw-bold text-dark">@yield('title', 'Warung Koperasi')</h4>
+                    </div>
+
+                    {{-- Status Header / User Info --}}
+                    <div class="d-flex align-items-center gap-2">
+                        @auth
+                            <div class="d-none d-sm-block text-end me-2">
+                                <div class="fw-bold small text-dark">{{ Auth::user()->name }}</div>
+                                <small class="text-muted" style="font-size: 0.75rem;">
+                                    {{ Auth::user()->isAdmin() ? 'Administrator' : 'Karyawan' }}
+                                </small>
+                            </div>
+                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-danger btn-sm shadow-sm" title="Keluar">
+                                    <i class="bi bi-box-arrow-right"></i> <span class="d-none d-md-inline ms-1">Logout</span>
+                                </button>
+                            </form>
+                        @else
+                            <span class="badge bg-secondary py-2 px-3 d-none d-sm-inline-block">
+                                <i class="bi bi-person-slash me-1"></i> Mode Kasir (Tamu)
+                            </span>
+                            <a href="{{ route('login') }}" class="btn btn-primary btn-sm shadow-sm px-3">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                            </a>
+                        @endauth
+                    </div>
                 </div>
 
                 <!-- Flash Message -->

@@ -93,6 +93,49 @@
                         @enderror
                     </div>
                 </div>
+                <div class="card border border-primary border-opacity-25 bg-light mb-4">
+                    <div class="card-body p-3">
+                        <h6 class="fw-bold text-primary mb-3">
+                            <i class="bi bi-shield-lock me-1"></i> Pengaturan Akun & Hak Akses Login
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="role" class="form-label fw-semibold">Role / Hak Akses</label>
+                                <select class="form-select @error('role') is-invalid @enderror" id="role" name="role">
+                                    <option value="karyawan" {{ old('role', $karyawan->user->role ?? 'karyawan') == 'karyawan' ? 'selected' : '' }}>
+                                        Karyawan (Akses riwayat & laporan pribadi)
+                                    </option>
+                                    <option value="admin" {{ old('role', $karyawan->user->role ?? '') == 'admin' ? 'selected' : '' }}>
+                                        Admin (Akses penuh seluruh sistem)
+                                    </option>
+                                </select>
+                                @error('role')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted d-block mt-1">
+                                    Pilih tingkat hak akses login untuk akun ini.
+                                </small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label fw-semibold">Ubah Password Akun</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                           id="password" name="password" placeholder="Kosongkan jika tidak ingin mengganti password">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                                @error('password')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted d-block mt-1">
+                                    Password bawaan default adalah <strong>NIP</strong>. Isi kolom ini hanya jika ingin mengganti password baru.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-save"></i> Update
                 </button>
@@ -100,3 +143,22 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('togglePassword');
+        const passInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        if (toggleBtn && passInput) {
+            toggleBtn.addEventListener('click', function() {
+                const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passInput.setAttribute('type', type);
+                toggleIcon.classList.toggle('bi-eye');
+                toggleIcon.classList.toggle('bi-eye-slash');
+            });
+        }
+    });
+</script>
+@endpush

@@ -18,8 +18,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'role',
+        'karyawan_id',
         'jabatan_id',
     ];
 
@@ -49,5 +52,20 @@ class User extends Authenticatable
     public function jabatan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Jabatan::class, 'jabatan_id');
+    }
+
+    public function karyawan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Karyawan::class, 'karyawan_id');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isKaryawan(): bool
+    {
+        return $this->role === 'karyawan';
     }
 }

@@ -27,5 +27,7 @@ class DatabaseSeeder extends Seeder
             KaryawanSeeder::class,
             TransaksiSeeder::class,
         ]);
+
+        \Illuminate\Support\Facades\Artisan::call('users:sync-karyawan');
     }
 }
