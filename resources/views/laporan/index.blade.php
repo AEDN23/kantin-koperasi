@@ -9,23 +9,13 @@
     <div class="card mb-4">
         <div class="card-body">
             <form action="{{ route('laporan.index') }}" method="GET" class="row g-3 align-items-end">
-                <div class="{{ $isKaryawan ? 'col-md-4' : 'col-md-3' }}">
-                    <label for="bulan" class="form-label">Bulan</label>
-                    <select class="form-select" id="bulan" name="bulan">
-                        @for($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}" {{ $bulan == $i ? 'selected' : '' }}>
-                                {{ DateTime::createFromFormat('!m', $i)->format('F') }}
-                            </option>
-                        @endfor
-                    </select>
+                <div class="{{ $isKaryawan ? 'col-md-3' : 'col-md-3' }}">
+                    <label for="dari" class="form-label">Dari Tanggal</label>
+                    <input type="date" class="form-control" id="dari" name="dari" value="{{ $dari }}">
                 </div>
-                <div class="{{ $isKaryawan ? 'col-md-4' : 'col-md-3' }}">
-                    <label for="tahun" class="form-label">Tahun</label>
-                    <select class="form-select" id="tahun" name="tahun">
-                        @for($y = now()->year; $y >= now()->year - 5; $y--)
-                            <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endfor
-                    </select>
+                <div class="{{ $isKaryawan ? 'col-md-3' : 'col-md-3' }}">
+                    <label for="sampai" class="form-label">Sampai Tanggal</label>
+                    <input type="date" class="form-control" id="sampai" name="sampai" value="{{ $sampai }}">
                 </div>
                 @if(!$isKaryawan)
                     <div class="col-md-3">
@@ -40,13 +30,18 @@
                         </select>
                     </div>
                 @endif
-                <div class="{{ $isKaryawan ? 'col-md-4' : 'col-md-3' }}">
+                <div class="{{ $isKaryawan ? 'col-md-6' : 'col-md-3' }}">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-filter"></i> Filter
                     </button>
                     <a href="{{ route('laporan.index') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-clockwise"></i> Reset
                     </a>
+                    @if($laporans->count() > 0)
+                        <a href="{{ route('laporan.export', ['dari' => $dari, 'sampai' => $sampai, 'departemen_id' => $departemen_id]) }}" class="btn btn-success">
+                            <i class="bi bi-file-earmark-excel"></i> Export Excel
+                        </a>
+                    @endif
                 </div>
             </form>
         </div>
@@ -63,7 +58,7 @@
                     <tr>
                         <th data-orderable="false" style="width: 50px;">No</th>
                         <th>Nama Karyawan</th>
-                        <th>Departemen</th>
+                        <th>Line</th>
                         <th>Jml Trx</th>
                         <th>Total Piutang</th>
                         <th>Total Belanja</th>
@@ -85,7 +80,7 @@
                                     <span class="fw-bold">{{ $karyawan->nama_karyawan }}</span>
                                 @endif
                             </td>
-                            <td>{{ $karyawan->departemen->nama_departemen ?? '-' }}</td>
+                            <td>{{ $karyawan->jabatan->nama_jabatan ?? '-' }}</td>
                             <td>{{ $karyawan->jumlah_transaksi }}x</td>
                             <td class="text-danger fw-bold">Rp {{ number_format($karyawan->total_piutang, 0, ',', '.') }}</td>
                             <td class="fw-bold">Rp {{ number_format($karyawan->total_belanja, 0, ',', '.') }}</td>
@@ -95,7 +90,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ $isKaryawan ? '6' : '7' }}" class="text-center text-muted py-4">Tidak ada transaksi di bulan ini</td>
+                            <td colspan="{{ $isKaryawan ? '6' : '7' }}" class="text-center text-muted py-4">Tidak ada transaksi di periode ini</td>
                         </tr>
                     @endforelse
                 </tbody>

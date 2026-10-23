@@ -55,6 +55,7 @@ Route::middleware(['auth', 'role:admin,karyawan'])->group(function () {
     Route::get('/transaksi/{transaksi}', [TransaksiController::class, 'show'])->name('transaksi.show');
 
     // Laporan (Karyawan hanya miliknya, Admin semua)
+    Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });
 

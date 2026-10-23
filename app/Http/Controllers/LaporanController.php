@@ -6,30 +6,37 @@ use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use App\Models\Karyawan;
 use App\Models\Departemens;
+use App\Models\Jabatan;
+use App\Exports\LaporanExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class LaporanController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Build the laporan query based on date range and filters.
+     */
+    private function buildLaporanData(Request $request)
     {
-        $bulan = $request->bulan ?? now()->month;
-        $tahun = $request->tahun ?? now()->year;
+        $dari = $request->dari ?? Carbon::now()->startOfMonth()->format('Y-m-d');
+        $sampai = $request->sampai ?? Carbon::now()->format('Y-m-d');
 
         $departemen_id = $request->departemen_id;
         $departemens = Departemens::orderBy('nama_departemen')->get();
 
-        // Ambil semua karyawan yang punya transaksi di bulan/tahun tersebut
+        // Ambil semua karyawan yang punya transaksi di rentang tanggal tersebut
         $query = Karyawan::with([
             'departemen',
-            'transaksis' => function ($query) use ($bulan, $tahun) {
-                $query->whereMonth('created_at', $bulan)
-                    ->whereYear('created_at', $tahun)
+            'transaksis' => function ($query) use ($dari, $sampai) {
+                $query->whereDate('created_at', '>=', $dari)
+                    ->whereDate('created_at', '<=', $sampai)
                     ->with('transaksiDetails.barang');
             }
         ])
-            ->whereHas('transaksis', function ($query) use ($bulan, $tahun) {
-                $query->whereMonth('created_at', $bulan)
-                    ->whereYear('created_at', $tahun);
+            ->whereHas('transaksis', function ($query) use ($dari, $sampai) {
+                $query->whereDate('created_at', '>=', $dari)
+                    ->whereDate('created_at', '<=', $sampai);
             });
 
         $user = auth()->user();
@@ -39,6 +46,10 @@ class LaporanController extends Controller
             $query->where('id', $user->karyawan_id);
         } elseif ($request->filled('departemen_id')) {
             $query->where('departemen_id', $request->departemen_id);
+        }
+
+        if ($request->has('jabatan_id')) {
+            $query->where('jabatan_id', $request->jabatan_id);
         }
 
         $laporans = $query->get()
@@ -63,6 +74,36 @@ class LaporanController extends Controller
 
         $grandTotal = $laporans->sum('total_belanja');
 
-        return view('laporan.index', compact('laporans', 'bulan', 'tahun', 'grandTotal', 'departemens', 'departemen_id', 'isKaryawan'));
+        return compact('laporans', 'dari', 'sampai', 'grandTotal', 'departemens', 'departemen_id', 'isKaryawan');
+    }
+
+    public function index(Request $request)
+    {
+        $data = $this->buildLaporanData($request);
+
+        return view('laporan.index', $data);
+    }
+
+    public function export(Request $request)
+    {
+        $data = $this->buildLaporanData($request);
+
+        $periodeLabel = 'Periode: ' . Carbon::parse($data['dari'])->format('d/m/Y')
+            . ' s/d ' . Carbon::parse($data['sampai'])->format('d/m/Y');
+
+        if ($data['departemen_id']) {
+            $dept = $data['departemens']->firstWhere('id', $data['departemen_id']);
+            if ($dept) {
+                $periodeLabel .= ' | Departemen: ' . $dept->nama_departemen;
+            }
+        }
+
+        $dicetakPada = now()->format('d/m/Y H:i') . ' WIB';
+        $filename = 'Laporan_Bulanan_' . Carbon::parse($data['dari'])->format('Ymd') . '_' . Carbon::parse($data['sampai'])->format('Ymd') . '.xlsx';
+
+        return Excel::download(
+            new LaporanExport($data['laporans'], $data['grandTotal'], $periodeLabel, $dicetakPada),
+            $filename
+        );
     }
 }
