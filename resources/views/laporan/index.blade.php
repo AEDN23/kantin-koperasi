@@ -19,12 +19,12 @@
                 </div>
                 @if(!$isKaryawan)
                     <div class="col-md-3">
-                        <label for="departemen_id" class="form-label">Departemen</label>
-                        <select class="form-select" id="departemen_id" name="departemen_id">
-                            <option value="">-- Semua Departemen --</option>
-                            @foreach($departemens as $dept)
-                                <option value="{{ $dept->id }}" {{ $departemen_id == $dept->id ? 'selected' : '' }}>
-                                    {{ $dept->nama_departemen }}
+                        <label for="jabatan_id" class="form-label">Line</label>
+                        <select class="form-select" id="jabatan_id" name="jabatan_id">
+                            <option value="">-- Semua Line --</option>
+                            @foreach($lines as $line)
+                                <option value="{{ $line->id }}" {{ ($jabatan_id ?? '') == $line->id ? 'selected' : '' }}>
+                                    {{ $line->nama_jabatan }}
                                 </option>
                             @endforeach
                         </select>
@@ -38,7 +38,7 @@
                         <i class="bi bi-arrow-clockwise"></i> Reset
                     </a>
                     @if($laporans->count() > 0)
-                        <a href="{{ route('laporan.export', ['dari' => $dari, 'sampai' => $sampai, 'departemen_id' => $departemen_id]) }}" class="btn btn-success">
+                        <a href="{{ route('laporan.export', ['dari' => $dari, 'sampai' => $sampai, 'jabatan_id' => $jabatan_id]) }}" class="btn btn-success">
                             <i class="bi bi-file-earmark-excel"></i> Export Excel
                         </a>
                     @endif

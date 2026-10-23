@@ -22,11 +22,14 @@ class LaporanController extends Controller
         $dari = $request->dari ?? Carbon::now()->startOfMonth()->format('Y-m-d');
         $sampai = $request->sampai ?? Carbon::now()->format('Y-m-d');
 
+        $jabatan_id = $request->jabatan_id;
+        $lines = Jabatan::orderBy('nama_jabatan')->get();
         $departemen_id = $request->departemen_id;
         $departemens = Departemens::orderBy('nama_departemen')->get();
 
         // Ambil semua karyawan yang punya transaksi di rentang tanggal tersebut
         $query = Karyawan::with([
+            'jabatan',
             'departemen',
             'transaksis' => function ($query) use ($dari, $sampai) {
                 $query->whereDate('created_at', '>=', $dari)
@@ -44,12 +47,10 @@ class LaporanController extends Controller
 
         if ($isKaryawan) {
             $query->where('id', $user->karyawan_id);
+        } elseif ($request->filled('jabatan_id')) {
+            $query->where('jabatan_id', $request->jabatan_id);
         } elseif ($request->filled('departemen_id')) {
             $query->where('departemen_id', $request->departemen_id);
-        }
-
-        if ($request->has('jabatan_id')) {
-            $query->where('jabatan_id', $request->jabatan_id);
         }
 
         $laporans = $query->get()
@@ -74,7 +75,7 @@ class LaporanController extends Controller
 
         $grandTotal = $laporans->sum('total_belanja');
 
-        return compact('laporans', 'dari', 'sampai', 'grandTotal', 'departemens', 'departemen_id', 'isKaryawan');
+        return compact('laporans', 'dari', 'sampai', 'grandTotal', 'lines', 'jabatan_id', 'departemens', 'departemen_id', 'isKaryawan');
     }
 
     public function index(Request $request)
@@ -91,7 +92,12 @@ class LaporanController extends Controller
         $periodeLabel = 'Periode: ' . Carbon::parse($data['dari'])->format('d/m/Y')
             . ' s/d ' . Carbon::parse($data['sampai'])->format('d/m/Y');
 
-        if ($data['departemen_id']) {
+        if (!empty($data['jabatan_id'])) {
+            $line = $data['lines']->firstWhere('id', $data['jabatan_id']);
+            if ($line) {
+                $periodeLabel .= ' | Line: ' . $line->nama_jabatan;
+            }
+        } elseif (!empty($data['departemen_id'])) {
             $dept = $data['departemens']->firstWhere('id', $data['departemen_id']);
             if ($dept) {
                 $periodeLabel .= ' | Departemen: ' . $dept->nama_departemen;
