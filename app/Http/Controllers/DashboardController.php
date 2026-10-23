@@ -66,14 +66,15 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        // 3. Bar Chart 2: Top 10 Karyawan (Sering Beli - Berdasarkan Frekuensi Transaksi)
+        // 3. Bar Chart 2: Top 10 Karyawan (Pengeluaran / Belanja Terbanyak)
         $chartTopKaryawan = Karyawan::select('karyawans.nama_karyawan')
-            ->selectRaw('COUNT(transaksis.id) as total_transaksi')
+            ->selectRaw('COALESCE(SUM(transaksi_details.total_harga), 0) as total_belanja')
             ->join('transaksis', 'karyawans.id', '=', 'transaksis.karyawan_id')
+            ->join('transaksi_details', 'transaksis.id', '=', 'transaksi_details.transaksi_id')
             ->whereMonth('transaksis.created_at', $selectedMonth)
             ->whereYear('transaksis.created_at', $selectedYear)
             ->groupBy('karyawans.id', 'karyawans.nama_karyawan')
-            ->orderByDesc('total_transaksi')
+            ->orderByDesc('total_belanja')
             ->limit(10)
             ->get();
 

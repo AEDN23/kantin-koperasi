@@ -150,8 +150,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0"><i class="bi bi-star-fill text-info me-2"></i>Top 10 Karyawan (Sering Beli)
-                    </h5>
+                    <h5 class="fw-bold mb-0"><i class="bi bi-cash-stack text-success me-2"></i>Top 10 Karyawan (Belanja Terbanyak)</h5>
                 </div>
                 <div class="card-body px-4 pb-4">
                     <canvas id="barChartKaryawan" style="height: 400px;"></canvas>
@@ -258,15 +257,15 @@
                 }
             });
 
-            // 3. Bar Chart: Top 10 Karyawan
+            // 3. Bar Chart: Top 10 Karyawan (Belanja Terbanyak)
             const karyawanData = @json($chartTopKaryawan);
             new Chart(document.getElementById('barChartKaryawan'), {
                 type: 'bar',
                 data: {
                     labels: karyawanData.map(k => k.nama_karyawan),
                     datasets: [{
-                        label: ' Kali Belanja',
-                        data: karyawanData.map(k => k.total_transaksi),
+                        label: ' Total Belanja',
+                        data: karyawanData.map(k => k.total_belanja),
                         backgroundColor: '#764ba2',
                         borderRadius: 5
                     }]
@@ -275,9 +274,22 @@
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => ' Rp ' + new Intl.NumberFormat('id-ID').format(context.raw)
+                            }
+                        }
+                    },
                     scales: {
-                        x: { beginAtZero: true, grid: { display: false } },
+                        x: {
+                            beginAtZero: true,
+                            grid: { display: false },
+                            ticks: {
+                                callback: (value) => 'Rp ' + new Intl.NumberFormat('id-ID').format(value)
+                            }
+                        },
                         y: { grid: { display: false } }
                     }
                 }
