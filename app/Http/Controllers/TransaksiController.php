@@ -206,6 +206,98 @@ class TransaksiController extends Controller
         return view('transaksi.show', compact('transaksi'));
     }
 
+    public function edit(Transaksi $transaksi)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->isAdmin()) {
+            abort(403, 'Hanya Administrator yang dapat mengubah data transaksi.');
+        }
+
+        $transaksi->load('karyawan', 'transaksiDetails.barang');
+
+        $karyawans = Karyawan::with('departemen')
+            ->leftJoin('departemens', 'karyawans.departemen_id', '=', 'departemens.id')
+            ->orderBy('departemens.nama_departemen')
+            ->orderBy('karyawans.nama_karyawan')
+            ->select('karyawans.*')
+            ->get();
+
+        // Hitung stok efektif: stok di DB + kuantitas item yang sedang dipakai transaksi ini
+        $existingQtyByBarang = $transaksi->transaksiDetails
+            ->groupBy('barang_id')
+            ->map(fn($details) => $details->sum('jumlah'));
+
+        $barangs = Barang::orderBy('nama_barang')->get()->map(function ($barang) use ($existingQtyByBarang) {
+            $qtyInTrx = $existingQtyByBarang->get($barang->id, 0);
+            $barang->stok_tersedia = $barang->stok + $qtyInTrx;
+            return $barang;
+        });
+
+        return view('transaksi.edit', compact('transaksi', 'karyawans', 'barangs'));
+    }
+
+    public function update(Request $request, Transaksi $transaksi)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->isAdmin()) {
+            abort(403, 'Hanya Administrator yang dapat mengubah data transaksi.');
+        }
+
+        $request->validate([
+            'karyawan_id' => 'required|exists:karyawans,id',
+            'created_at' => 'nullable|date',
+            'keterangan' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.barang_id' => 'required|exists:barangs,id',
+            'items.*.jumlah' => 'required|integer|min:1',
+            'items.*.metode_pembayaran' => 'required|in:tunai,piutang',
+        ]);
+
+        DB::transaction(function () use ($request, $transaksi) {
+            // 1. Kembalikan stok item lama
+            foreach ($transaksi->transaksiDetails as $detail) {
+                $barang = Barang::find($detail->barang_id);
+                if ($barang) {
+                    $barang->increment('stok', $detail->jumlah);
+                }
+            }
+
+            // 2. Hapus detail lama
+            $transaksi->transaksiDetails()->delete();
+
+            // 3. Update data transaksi
+            $transaksiData = [
+                'karyawan_id' => $request->karyawan_id,
+                'keterangan' => $request->keterangan,
+            ];
+            if ($request->filled('created_at')) {
+                $transaksiData['created_at'] = $request->created_at;
+            }
+            $transaksi->update($transaksiData);
+
+            // 4. Buat detail item baru dan potong stok
+            foreach ($request->items as $item) {
+                $barang = Barang::findOrFail($item['barang_id']);
+
+                TransaksiDetail::create([
+                    'transaksi_id' => $transaksi->id,
+                    'barang_id' => $item['barang_id'],
+                    'jumlah' => $item['jumlah'],
+                    'harga_satuan' => $barang->harga_jual,
+                    'total_harga' => $barang->harga_jual * $item['jumlah'],
+                    'metode_pembayaran' => $item['metode_pembayaran'],
+                    'status_pembayaran' => $item['metode_pembayaran'] == 'tunai' ? 'lunas' : 'belum_lunas',
+                ]);
+
+                // Kurangi stok
+                $barang->decrement('stok', $item['jumlah']);
+            }
+        });
+
+        return redirect()->route('transaksi.riwayat')
+            ->with('success', "Transaksi {$transaksi->kode_transaksi} berhasil diperbarui!");
+    }
+
     public function destroy(Transaksi $transaksi)
     {
         $user = auth()->user();

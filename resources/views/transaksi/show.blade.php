@@ -42,9 +42,16 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Detail Transaksi</h2>
-        <a href="{{ route('transaksi.riwayat') }}" class="btn btn-secondary no-print">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+        <div class="no-print d-flex gap-2">
+            @if(Auth::user()?->isAdmin())
+                <a href="{{ route('transaksi.edit', $transaksi) }}" class="btn btn-warning text-dark">
+                    <i class="bi bi-pencil"></i> Edit Transaksi
+                </a>
+            @endif
+            <a href="{{ route('transaksi.riwayat') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali
+            </a>
+        </div>
     </div>
 
     <div class="card mb-4">
